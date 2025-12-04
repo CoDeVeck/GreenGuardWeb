@@ -2,6 +2,7 @@ package com.Cibertec.GreenGuard.model;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,11 +10,11 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @Entity
 @Table(name = "tb_usuario")
 public class Usuario {
@@ -48,7 +49,7 @@ public class Usuario {
 	private String generoUsu;
 
     @Column(name="imagen_usu")
-    private String imagenUSU;
+    private String imagenUsu;
 
 	@Column(name="registro_usu")
 	private LocalDateTime registroUsu;
@@ -57,7 +58,7 @@ public class Usuario {
 	private int puntosUsu;
 	
 	@ManyToOne
-	@JoinColumn(name="ROL")
+	@JoinColumn(name="id_rol")
 	private Rol rol;
 	
 	@Column(name="activo")
@@ -68,6 +69,8 @@ public class Usuario {
 	
 	@Column(name="FCM_TOKEN_FECHA")
 	private LocalDateTime fmcTokenFecha;
-	
-	
+
+    @JsonIgnore
+    @Transient
+    private MultipartFile imagenUrl; // para la subida de imagens
 }

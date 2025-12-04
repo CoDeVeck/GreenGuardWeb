@@ -1,9 +1,11 @@
 package com.Cibertec.GreenGuard.model;
 
 import com.Cibertec.GreenGuard.enums.EstadoReporte;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.cglib.core.Local;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -12,7 +14,6 @@ import java.time.LocalDateTime;
 @Table(name = "tb_reporte")
 @Getter
 @Setter
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Reporte {
@@ -63,4 +64,7 @@ public class Reporte {
     @Column(name="repo_resuelto")
     private LocalDateTime repoResuelto;
 
+    @JsonIgnore
+    @Transient
+    private MultipartFile imagenUrl; // para la subida de imagens
 }
