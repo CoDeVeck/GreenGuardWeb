@@ -6,6 +6,7 @@ import com.Cibertec.GreenGuard.service.CloudinaryService;
 import com.Cibertec.GreenGuard.service.UsuarioService;
 import com.Cibertec.GreenGuard.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -58,7 +60,11 @@ public class AuthController {
 
         try {
             String urlImagen = cloudinaryService.uploadImage(
+            		/*En este caso la carpeta lo colocando asi poorque
+            		 la carpeta se llama si vas a subirlo en otro cambias
+            		 Users por otra GreenGuard/nombreCarpeta*/
                     usuario.getImagenUrl(), "GreenGuard/Users");
+           
             usuario.setImagenUsu(urlImagen);
 
             ResultadoResponse resultado = usuarioService.createUser(usuario);
@@ -68,6 +74,19 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error registrando usuario: " + e.getMessage());
         }
+    }
+    
+    @GetMapping("/me")
+    public ResponseEntity<?> getUsuarioInfo(Authentication authentication){
+        String correoUsu = authentication.getName();
+        Optional<Usuario> usuarioOPT = usuarioService.obtenerDatos(correoUsu);
+
+        if (usuarioOPT.isEmpty()){
+            return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontardo");
+        }
+        Usuario usuario = usuarioOPT.get();
+
+        return  ResponseEntity.ok(usuario);
     }
 
 }

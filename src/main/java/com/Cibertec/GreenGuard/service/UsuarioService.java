@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class UsuarioService implements UserDetailsService {
@@ -33,6 +34,11 @@ public class UsuarioService implements UserDetailsService {
                 .roles(u.getRol().getDescripcion().replace("ROLE_",""))
                 .build();
     }
+
+    public Optional<Usuario> obtenerDatos(String correo){
+        return usuarioRepo.findByCorreoUsu(correo);
+    }
+
     public ResultadoResponse createUser(Usuario user){
         ResultadoResponse resultado = new ResultadoResponse();
 
