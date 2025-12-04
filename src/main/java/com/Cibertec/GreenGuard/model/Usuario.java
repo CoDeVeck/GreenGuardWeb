@@ -58,7 +58,7 @@ public class Usuario {
 	private int puntosUsu;
 	
 	@ManyToOne
-	@JoinColumn(name="ROL")
+	@JoinColumn(name="id_rol")
 	private Rol rol;
 	
 	@Column(name="activo")

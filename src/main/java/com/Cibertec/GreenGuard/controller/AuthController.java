@@ -8,10 +8,15 @@ import com.Cibertec.GreenGuard.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/auth")
@@ -28,6 +33,25 @@ public class AuthController {
 
     @Autowired
     CloudinaryService cloudinaryService;
+
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUsuario(@RequestParam("correoUsu")String correoUsu,
+                                          @RequestParam("passwordUsu") String passwordUsu){
+
+        Authentication auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(correoUsu, passwordUsu)
+        );
+
+        UserDetails userDetails = (UserDetails) auth.getPrincipal();
+
+        List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
+
+        String token = jwtUtil.generateToken(correoUsu, roles);
+        return  ResponseEntity.ok(Map.of("token", token));
+
+    }
+
 
     @PostMapping(value= "/register", consumes = {"multipart/form-data"})
     public ResponseEntity<?> registrarUsuario(@ModelAttribute Usuario usuario){
