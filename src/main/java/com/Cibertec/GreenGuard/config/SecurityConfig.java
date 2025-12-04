@@ -33,10 +33,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/register").permitAll()
                         .requestMatchers("/cliente/index").permitAll()
                         .anyRequest().authenticated()
-                ).authorizeHttpRequests(auth -> auth.anyRequest().permitAll()
-                        );
-
-        httpSecurity.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                ).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
 

@@ -20,7 +20,7 @@ public class TipoIncidentes {
 	@Column(name="id_tipo_inci")
 	private Integer idTipoInci;
 	
-	@Column(name="desc_tipo_inci")
+		@Column(name="desc_tipo_inci")
 	private String descTipoInci;
 	
 }
