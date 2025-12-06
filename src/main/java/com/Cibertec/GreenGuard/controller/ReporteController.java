@@ -1,14 +1,62 @@
 package com.Cibertec.GreenGuard.controller;
 
+import com.Cibertec.GreenGuard.dto.ReporteRequestDTO;
+import com.Cibertec.GreenGuard.dto.ReporteResponseDTO;
 import com.Cibertec.GreenGuard.service.ReporteService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+@Slf4j
 @RestController
-@RequestMapping("/reporte")
+@RequestMapping("/reportes")
+@RequiredArgsConstructor
 public class ReporteController {
 
-    @Autowired
-    ReporteService reporteService;
+	private final ReporteService reporteService;
+	
+	@PostMapping("/con-clasificacion")
+	public ResponseEntity<ReporteResponseDTO> crearReporteConClasificacion(
+	        @RequestParam("idUsu") Integer idUsu,
+	        @RequestParam("detalleRepo") String detalleRepo,
+	        @RequestParam("latitud") BigDecimal latitud,
+	        @RequestParam("longitud") BigDecimal longitud,
+	        @RequestParam("idDistrito") Integer idDistrito,
+	        
+	        // ✅ RECIBIR DATOS DE CLASIFICACIÓN YA OBTENIDOS
+	        @RequestParam("idTipoIncidente") Integer idTipoIncidente,
+	        @RequestParam("idClasificacion") Integer idClasificacion,
+	        @RequestParam("descripcionIA") String descripcionIA,
+	        @RequestParam("puntosEstimados") Integer puntosEstimados,
+	        
+	        @RequestParam("imagen") MultipartFile imagen
+	) throws IOException {
+	    
+	    ReporteRequestDTO request = new ReporteRequestDTO();
+	    request.setIdUsu(idUsu);
+	    request.setDetalleRepo(detalleRepo);
+	    request.setLatitud(latitud);
+	    request.setLongitud(longitud);
+	    request.setIdDistrito(idDistrito);
+	    request.setImagen(imagen);
+	    
+	    // ✅ Datos de clasificación pre-obtenidos
+	    request.setIdTipoIncidente(idTipoIncidente);
+	    request.setIdClasificacion(idClasificacion);
+	    request.setDescripcionIA(descripcionIA);
+	    request.setPuntosEstimados(puntosEstimados);
+	    
+	    ReporteResponseDTO response = reporteService.crearReporteConClasificacion(request);
+	    return ResponseEntity.ok(response);
+	}
+	
 }

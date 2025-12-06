@@ -27,8 +27,11 @@ public class SecurityConfig {
                 .csrf(crsf -> crsf.disable())
                 .sessionManagement( sess ->
                         sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
+                /* .authorizeHttpRequests(auth -> auth
+                        .anyRequest().permitAll()   
+                );*/
                 .authorizeHttpRequests(auth -> auth
+                		.requestMatchers("/api/classify").permitAll()
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/auth/register").permitAll()
                         .requestMatchers("/cliente/index").permitAll()
