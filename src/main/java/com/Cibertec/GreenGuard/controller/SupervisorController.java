@@ -51,4 +51,25 @@ public class SupervisorController {
 
         return ResponseEntity.ok(reporteEncontrado);
     }
+
+    @PutMapping("/reporteProceso/{idReporte}")
+    public ResponseEntity<?>actualizarReporteEnProceso(@PathVariable("idReporte") Integer idReporte){
+        if (idReporte == 0){
+            throw new EntityNotFoundException("Ingresar un numero valido");
+        }
+        Reporte reporteActualizado = reporteService.cambiarEstadoEnProceso(idReporte);
+
+        return ResponseEntity.ok(reporteActualizado);
+    }
+
+    @PutMapping("/reporteResuelto/{idReporte}")
+    public ResponseEntity<?>actualizarReporteResuelto(@PathVariable("idReporte") Integer idReporte){
+        if (idReporte == 0){
+            throw new EntityNotFoundException("Ingresar un numero valido");
+        }
+        Reporte reporteActualizado = reporteService.cambiarEstadoEnResuelto(idReporte);
+
+        return ResponseEntity.ok(reporteActualizado);
+    }
+
 }
