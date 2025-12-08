@@ -1,6 +1,6 @@
 package com.Cibertec.GreenGuard.service;
 
-import com.Cibertec.GreenGuard.dto.ResultadoResponse;
+import com.Cibertec.GreenGuard.dto.response.ResultadoResponse;
 import com.Cibertec.GreenGuard.model.Rol;
 import com.Cibertec.GreenGuard.model.Usuario;
 import com.Cibertec.GreenGuard.repository.IUsuarioRepository;
