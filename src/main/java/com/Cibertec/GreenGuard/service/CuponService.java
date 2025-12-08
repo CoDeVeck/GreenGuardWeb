@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 @Service
 public class CuponService {
@@ -36,10 +37,10 @@ public class CuponService {
 
         //Solo tiene que tener letras mas no numeros para evitar q el valor del descuento sea uno S/15
         //y en la descripcion ponngan S/20 abusando del sistema y estafando a la gente
-        String regexSoloLetras = "^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$";
+        /*String regexSoloLetras = "^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$";
         if (!cupon.getDescCupon().matches(regexSoloLetras)){
             throw new RuntimeException("Solo se permite la entrada de letras no numeros!");
-        }
+        }*/
 
         Categoria categoria = categoriaRepository.findById(cupon.getCategoria().getIdCate())
                 .orElseThrow(() -> new RuntimeException("Categoria no encontrada"));
@@ -47,7 +48,9 @@ public class CuponService {
         Tienda tienda = tiendaRepository.findById(cupon.getTienda().getIdTienda())
                 .orElseThrow(() -> new RuntimeException("Categoria no encontrada"));
 
-        cupoRegistrado.setDescCupon("S/." + valorDescuento +" " + cupon.getDescCupon());
+        String categoriaName = categoria.getDescCate().toLowerCase();
+
+        cupoRegistrado.setDescCupon("S/" + valorDescuento +" " + "de descuento en " + categoriaName);
         cupoRegistrado.setCategoria(categoria);
         cupoRegistrado.setTienda(tienda);
         cupoRegistrado.setPuntosRequeridos(puntosNecesarios);
