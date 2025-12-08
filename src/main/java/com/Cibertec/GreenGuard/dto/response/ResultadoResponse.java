@@ -1,4 +1,4 @@
-package com.Cibertec.GreenGuard.dto;
+package com.Cibertec.GreenGuard.dto.response;
 
 import lombok.Data;
 

@@ -1,6 +1,6 @@
 package com.Cibertec.GreenGuard.controller;
 
-import com.Cibertec.GreenGuard.dto.ResultadoResponse;
+import com.Cibertec.GreenGuard.dto.response.ResultadoResponse;
 import com.Cibertec.GreenGuard.model.Usuario;
 import com.Cibertec.GreenGuard.service.CloudinaryService;
 import com.Cibertec.GreenGuard.service.UsuarioService;
