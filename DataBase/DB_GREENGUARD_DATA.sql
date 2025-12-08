@@ -89,16 +89,17 @@ INSERT INTO tb_tienda (nom_tienda, id_usu, id_distrito) VALUES
 ('Comercial Lima Centro', 4, 1),
 ('Tienda Rápida Express', 6, 5);
 
+
 -- TB_CUPON
-INSERT INTO tb_cupon (nombre_cupon, desc_cupon, id_cate, cod_cupon, puntos_requeridos, id_tienda) VALUES
-('Descuento 20% Ropa', '20% desc. en toda la tienda', 1, 'ROPA20', 100, 1),
-('Descuento 50% Comidas', '50% desc. en todos los almuerzos', 2, 'LUNCH50', 150, 2),
-('Descuento 10% Abarrotes', '10% desc. en compra de abarrotes', 3, 'ABARR10', 80, 3),
-('Descuento 15% Electrodomésticos', '15% desc. en electrodomésticos', 4, 'ELECTRO15', 200, 4),
-('Descuento 25% Belleza', '25% desc. en productos de belleza', 5, 'BELLE25', 120, 5),
-('Descuento 35% General', '35% desc. en toda la tienda', 3, 'DESC35', 180, 1),
-('Descuento 30% Deportes', '30% desc. en artículos deportivos', 8, 'SPORT30', 250, 2),
-('Descuento 40% Comidas', '40% desc. en productos alimenticios', 2, 'FOOD40', 160, 3);
+INSERT INTO tb_cupon (nombre_cupon, desc_cupon, id_cate, puntos_requeridos, id_tienda,stock_disponible, fecha_vencimiento) VALUES
+('Descuento 20% Ropa', '20% desc. en toda la tienda', 1, 100, 1,100, '2025-12-24'),
+('Descuento 50% Comidas', '50% desc. en todos los almuerzos', 2, 150, 2,100,'2025-12-24'),
+('Descuento 10% Abarrotes', '10% desc. en compra de abarrotes', 3, 80, 3,100,'2025-12-24'),
+('Descuento 15% Electrodomésticos', '15% desc. en electrodomésticos', 4, 200, 4,100,'2025-12-24'),
+('Descuento 25% Belleza', '25% desc. en productos de belleza', 5, 120, 5,100,'2025-12-24'),
+('Descuento 35% General', '35% desc. en toda la tienda', 3, 180, 1,100,'2025-12-24'),
+('Descuento 30% Deportes', '30% desc. en artículos deportivos', 8, 250, 2,100,'2025-12-24'),
+('Descuento 40% Comidas', '40% desc. en productos alimenticios', 2, 160, 3,100,'2025-12-24');
 
 -- TB_USUARIO_CUPON
 INSERT INTO tb_usuario_cupon (id_cupon, id_usuario, codigo_cupon, qr_verification_code, canjeado, estado) VALUES
@@ -139,9 +140,6 @@ INSERT INTO tb_notificacion (id_usuario, id_tipo_notificacion, titulo, mensaje, 
 (7, 6, 'Promoción Especial', 'Nuevas promociones disponibles esta semana', NULL, NULL, NULL, FALSE),
 (2, 9, 'Actualización del Sistema', 'Nueva versión disponible con mejoras', NULL, NULL, NULL, TRUE),
 (5, 10, 'Promoción 2x1', 'Doble puntos este fin de semana', NULL, NULL, NULL, FALSE);
-
-
-
 
 
 

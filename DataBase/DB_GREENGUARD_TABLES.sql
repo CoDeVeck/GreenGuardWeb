@@ -80,10 +80,13 @@ CREATE TABLE tb_cupon(
     nombre_cupon VARCHAR(50) NOT NULL,
 	desc_cupon VARCHAR(50) NOT NULL,
     id_cate INT REFERENCES tb_categoria(id_cate),
-    cod_cupon VARCHAR(20) NOT NULL,
     puntos_requeridos INT NOT NULL,
     id_tienda INT REFERENCES tb_tienda(id_tienda),
+	stock_disponible INT,
+	
   	fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	fecha_vencimiento TIMESTAMP NOT NULL,
+	
     activo BOOLEAN DEFAULT TRUE
 );
 

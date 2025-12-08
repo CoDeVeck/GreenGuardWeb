@@ -21,6 +21,7 @@ public class ReporteService {
     @Autowired
     UsuarioService usuarioService;
 
+
     public Reporte registrarReporte(Reporte reporte, Integer idUsuario){
 
 
@@ -97,7 +98,7 @@ public class ReporteService {
        return   reporRepo.save(reportencontrado);
     }
 
-    public Reporte cambiarEstadoEnResuelto(Integer idReporte){
+    public Reporte cambiarEstadoEnResuelto(Integer idReporte) throws IllegalAccessException {
         Reporte reportencontrado = obtenerReportePorId(idReporte);
 
 
@@ -112,7 +113,23 @@ public class ReporteService {
         reportencontrado.setEstado(EstadoReporte.RE);
         reportencontrado.setRepoResuelto(LocalDateTime.now());
 
-        return   reporRepo.save(reportencontrado);
+        //Obtenemos al usuario con su reporte asignado
+        Usuario usuarioEncontrado = reportencontrado.getUsuario();
+
+        //calculamos los puntos que va a ganar
+        int puntosGanados = usuarioService.sumarPutosReporteInicidente(reportencontrado.getTipoIncidente().getIdTipoInci());
+
+        //Obtenemos los puntos del usuario en ese momento
+        int puntosActuales = usuarioEncontrado.getPuntosUsu();
+        int puntosNuevos = puntosActuales + puntosGanados; //Sumamos los puntos
+
+        //actualizamos los puntos con los que tenia mas el sumado
+        usuarioEncontrado.setPuntosUsu(puntosNuevos);
+
+        //actualizamos al usuario con sus puntos nuevos
+        usuarioService.actualizarUsuario(usuarioEncontrado);
+
+        return reporRepo.save(reportencontrado);
     }
 
     public ResultadoResponse cancelarReporte(Integer idReporte){
@@ -125,7 +142,6 @@ public class ReporteService {
             resultado.setMensaje("Error al cancelar el reporte");
             return resultado;
         }
-
 
 
         reportencontrado.setEstado(EstadoReporte.CA);
