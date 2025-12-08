@@ -1,13 +1,12 @@
 package com.Cibertec.GreenGuard.service;
 
 import com.Cibertec.GreenGuard.dto.ReporteFiltroEstadoIncidenteClasificacion;
-import com.Cibertec.GreenGuard.dto.ResultadoResponse;
+import com.Cibertec.GreenGuard.dto.response.ResultadoResponse;
 import com.Cibertec.GreenGuard.enums.EstadoReporte;
 import com.Cibertec.GreenGuard.model.*;
 import com.Cibertec.GreenGuard.repository.IReporteRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -78,18 +77,65 @@ public class ReporteService {
         return reporRepo.filtrarReportes(estado,incidente,clasificacion);
     }
 
-
-
-
-
-
-
-
-
-
-
-
+    public Reporte obtenerReportePorId(Integer idReporte){
+        return reporRepo.findById(idReporte).orElseThrow();
+    }
 
     //endregion
+
+
+    public Reporte cambiarEstadoEnProceso(Integer idReporte){
+        Reporte reportencontrado = obtenerReportePorId(idReporte);
+
+
+       if (reportencontrado == null){
+           throw new RuntimeException("Reporte no encontrado con ID: " + idReporte);
+       }
+
+       reportencontrado.setEstado(EstadoReporte.EP);
+
+       return   reporRepo.save(reportencontrado);
+    }
+
+    public Reporte cambiarEstadoEnResuelto(Integer idReporte){
+        Reporte reportencontrado = obtenerReportePorId(idReporte);
+
+
+        if (reportencontrado == null){
+            throw new RuntimeException("Reporte no encontrado con ID: " + idReporte);
+        }
+
+        if (reportencontrado.getEstado() != EstadoReporte.EP ){
+            throw new RuntimeException("El reporte tiene que estar en estado En Proceso para actualizar");
+        }
+
+        reportencontrado.setEstado(EstadoReporte.RE);
+        reportencontrado.setRepoResuelto(LocalDateTime.now());
+
+        return   reporRepo.save(reportencontrado);
+    }
+
+    public ResultadoResponse cancelarReporte(Integer idReporte){
+        Reporte reportencontrado = obtenerReportePorId(idReporte);
+        ResultadoResponse resultado = new ResultadoResponse();
+
+
+        if (reportencontrado == null){
+            resultado.setValor(false);
+            resultado.setMensaje("Error al cancelar el reporte");
+            return resultado;
+        }
+
+
+
+        reportencontrado.setEstado(EstadoReporte.CA);
+        resultado.setValor(true);
+        resultado.setMensaje("Se cancelo exitosamente el reporte con ID: " + idReporte);
+
+        return   resultado;
+    }
+
+
+
 
 }
