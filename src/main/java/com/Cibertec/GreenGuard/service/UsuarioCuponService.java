@@ -1,5 +1,6 @@
 package com.Cibertec.GreenGuard.service;
 
+import com.Cibertec.GreenGuard.dto.UsuarioCuponDto;
 import com.Cibertec.GreenGuard.dto.response.ResultadoResponse;
 import com.Cibertec.GreenGuard.enums.EstadoUsuarioCupon;
 import com.Cibertec.GreenGuard.model.Cupon;
@@ -7,14 +8,13 @@ import com.Cibertec.GreenGuard.model.Usuario;
 import com.Cibertec.GreenGuard.model.UsuarioCupon;
 import com.Cibertec.GreenGuard.repository.ICuponRepository;
 import com.Cibertec.GreenGuard.repository.IUsuarioCuponRepository;
-import com.Cibertec.GreenGuard.repository.IUsuarioRepository;
 import com.Cibertec.GreenGuard.util.GeneradorUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class UsuarioCuponService {
@@ -88,6 +88,21 @@ public class UsuarioCuponService {
         resultado.setMensaje("Exito! Adquiriste el cupon: " + cuponComprar.getNombreCupon());
 
         return resultado;
+    }
+
+
+    public List<UsuarioCuponDto> obtenerCuponesUsuario(Integer idUsu){
+       List<UsuarioCupon> listaObtenida = usuCupoRepo.findByUsuarioIdUsu(idUsu);
+
+       return listaObtenida.stream().map( c -> new UsuarioCuponDto(
+               c.getIdUsuarioCupon(),
+               c.getCupon().getNombreCupon(),
+               c.getCupon().getPuntosRequeridos(),
+               c.getFechaCanje(),
+               c.getEstado(),
+               c.getCodigoCupon(),
+               c.getQrVerificationCode()
+       )).toList();
     }
 
 }
