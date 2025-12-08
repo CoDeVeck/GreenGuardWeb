@@ -64,20 +64,20 @@ INSERT INTO tb_categoria (desc_cate) VALUES
 ('DEPORTES');
 
 -- TB_USUARIO
-INSERT INTO tb_usuario (nom_usu, ape_pat_usu, ape_mat_usu, documento_usu, correo_usu, password_usu, telefono_usu, genero_usu, puntos_usu, id_rol) VALUES
-('Carlos', 'García', 'López', '12345678', 'carlos.garcia@email.com', 'clave123', '987654321', 'M', 150, 1),
+INSERT INTO tb_usuario (nom_usu, ape_pat_usu, ape_mat_usu, documento_usu, correo_usu, password_usu, telefono_usu, genero_usu, puntos_usu, id_rol,id_distrito) VALUES
+('Carlos', 'García', 'López', '12345678', 'carlos.garcia@email.com', 'clave123', '987654321', 'M', 150, 1,1),
 
-('María', 'Rodríguez', 'Pérez', '87654321', 'maria.rodriguez@email.com', 'clave123', '987654322', 'F', 280, 2),
-('Juan', 'Martínez', 'Sánchez', '11223344', 'juan.martinez@email.com', 'clave123', '987654323', 'M', 420, 2),
-('Pedro', 'Flores', 'Vega', '55667788', 'pedro.flores@email.com', 'clave123', '987654325', 'M', 95, 2),
-('Roberto', 'Morales', 'Gutiérrez', '99887766', 'roberto.morales@email.com', 'clave123', '987654327', 'M', 520, 2),
-('Miguel', 'Herrera', 'Silva', '77889900', 'miguel.herrera@email.com', 'clave123', '987654329', 'M', 210, 2),
-('Ana', 'Torres', 'Ramos', '44332211', 'ana.torres@email.com', 'clave123', '987654324', 'F', 180, 3),
+('María', 'Rodríguez', 'Pérez', '87654321', 'maria.rodriguez@email.com', 'clave123', '987654322', 'F', 280, 2,2),
+('Juan', 'Martínez', 'Sánchez', '11223344', 'juan.martinez@email.com', 'clave123', '987654323', 'M', 420, 2,3),
+('Pedro', 'Flores', 'Vega', '55667788', 'pedro.flores@email.com', 'clave123', '987654325', 'M', 95, 2,4),
+('Roberto', 'Morales', 'Gutiérrez', '99887766', 'roberto.morales@email.com', 'clave123', '987654327', 'M', 520, 2,4),
+('Miguel', 'Herrera', 'Silva', '77889900', 'miguel.herrera@email.com', 'clave123', '987654329', 'M', 210, 2,6),
+('Ana', 'Torres', 'Ramos', '44332211', 'ana.torres@email.com', 'clave123', '987654324', 'F', 180, 3,7),
 
-('Lucía', 'Díaz', 'Castro', '88776655', 'lucia.diaz@email.com', 'clave123', '987654326', 'F', 340, 3),
-('Isabel', 'Quispe', 'Rojas', '00998877', 'isabel.quispe@email.com', 'clave123', '987654330', 'F', 160, 3),
+('Lucía', 'Díaz', 'Castro', '88776655', 'lucia.diaz@email.com', 'clave123', '987654326', 'F', 340, 3, 1),
+('Isabel', 'Quispe', 'Rojas', '00998877', 'isabel.quispe@email.com', 'clave123', '987654330', 'F', 160, 3,2),
 
-('Carmen', 'Vargas', 'Mendoza', '66778899', 'carmen.vargas@email.com', 'clave123', '987654328', 'F', 75, 4);
+('Carmen', 'Vargas', 'Mendoza', '66778899', 'carmen.vargas@email.com', 'clave123', '987654328', 'F', 75, 4,3);
 
 
 
@@ -143,3 +143,4 @@ INSERT INTO tb_notificacion (id_usuario, id_tipo_notificacion, titulo, mensaje, 
 
 
 
+select * from 

@@ -60,8 +60,12 @@ public class Usuario {
 	@ManyToOne
 	@JoinColumn(name="id_rol")
 	private Rol rol;
-	
-	@Column(name="activo")
+
+    @ManyToOne
+    @JoinColumn(name="id_distrito")
+    private Distrito distrito;
+
+    @Column(name="activo")
 	private Boolean activo;
 	
 	@Column(name="FCM_TOKEN")

@@ -41,6 +41,7 @@ CREATE TABLE tb_usuario(
     registro_usu DATE DEFAULT CURRENT_DATE,
     puntos_usu INT DEFAULT 0,
     id_rol INT,
+    id_distrito INT REFERENCES tb_distrito(id_distrito),
     activo BOOLEAN DEFAULT TRUE,
 	FCM_TOKEN VARCHAR(500) NULL,
     FCM_TOKEN_FECHA TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -51,7 +52,7 @@ CREATE TABLE tb_reporte(
     id_reporte SERIAL PRIMARY KEY,
     num_report VARCHAR(50) NOT NULL UNIQUE,
     id_usu INT,
-    detalle_repo VARCHAR(150) NOT NULL,
+    detalle_repo VARCHAR(150) NULL,
     imagen_repo VARCHAR(120) NULL,
     estado CHAR(2) CHECK (estado IN ('PE','EP','RE','CA')),    -- pendiente, en proceso, resuelto, cancelado
     latitud NUMERIC(10,6) NOT NULL,
