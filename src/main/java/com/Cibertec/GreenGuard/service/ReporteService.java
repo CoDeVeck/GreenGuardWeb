@@ -1,5 +1,6 @@
 package com.Cibertec.GreenGuard.service;
 
+import com.Cibertec.GreenGuard.dto.ReporteFiltroEstadoIncidenteClasificacion;
 import com.Cibertec.GreenGuard.dto.ResultadoResponse;
 import com.Cibertec.GreenGuard.enums.EstadoReporte;
 import com.Cibertec.GreenGuard.model.*;
@@ -10,6 +11,7 @@ import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class ReporteService {
@@ -62,5 +64,32 @@ public class ReporteService {
         Long count = reporRepo.count() + 1;
         return String.format("rep-%d-%d-%05d",LocalDateTime.now().getYear(), LocalDateTime.now().getDayOfMonth(),count);
     }
+
+
+    //region Listas y Filtros en reportes
+
+    public List<Reporte>listadoGenerallistadoGeneral(){
+        return reporRepo.findAll();
+    }
+
+
+    //Filtrado triple de reportes
+    public List<ReporteFiltroEstadoIncidenteClasificacion> listadoDeReportesPorFiltro(String estado, Integer incidente, Integer clasificacion){
+        return reporRepo.filtrarReportes(estado,incidente,clasificacion);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //endregion
 
 }
