@@ -1,6 +1,7 @@
 package com.Cibertec.GreenGuard.controller;
 
 import com.Cibertec.GreenGuard.dto.ReporteFiltroEstadoIncidenteClasificacion;
+import com.Cibertec.GreenGuard.dto.response.ResultadoResponse;
 import com.Cibertec.GreenGuard.model.Reporte;
 import com.Cibertec.GreenGuard.service.ReporteService;
 import jakarta.persistence.EntityNotFoundException;
@@ -74,6 +75,21 @@ public class SupervisorController {
        } catch (Exception e) {
            throw new RuntimeException(e);
        }
+
+    }
+
+    @PutMapping("/reporteCancelado/{idReporte}")
+    public ResponseEntity<?>actualizarCancelado(@PathVariable("idReporte") Integer idReporte) throws IllegalAccessException {
+        try {
+            if (idReporte == 0){
+                throw new EntityNotFoundException("Ingresar un numero valido");
+            }
+            ResultadoResponse resultadoResponse = reporteService.cancelarReporte(idReporte);
+
+            return ResponseEntity.ok(resultadoResponse);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
     }
 

@@ -144,7 +144,6 @@ public class ReporteService {
         }
 
 
-
         reportencontrado.setEstado(EstadoReporte.CA);
         resultado.setValor(true);
         resultado.setMensaje("Se cancelo exitosamente el reporte con ID: " + idReporte);
