@@ -33,7 +33,7 @@ public class GeneradorUtil {
         return builder.toString();
     }
 
-    public static String generarCodigoPedido(){
+    public static String generarCodigoCupon(){
         String parte1  = generarCadenaAleatoria(LETRAS, 3);
         String parte2  = generarCadenaAleatoria(LETRAS, 3);
         String parte3  = generarCadenaAleatoria(LETRAS, 3);
