@@ -21,8 +21,6 @@ public class UsuarioService implements UserDetailsService {
     IUsuarioRepository usuarioRepo;
 
 
-
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
 
@@ -33,6 +31,13 @@ public class UsuarioService implements UserDetailsService {
                 .password("{noop}" + u.getPasswordUsu())
                 .roles(u.getRol().getDescripcion().replace("ROLE_",""))
                 .build();
+    }
+
+
+    public Integer obtenerIdPorEmail(String email){
+        return usuarioRepo.findByCorreoUsu(email)
+                .map(Usuario::getIdUsu)
+                .orElseThrow(()-> new UsernameNotFoundException("Usuario no encontrado"));
     }
 
     public Optional<Usuario> obtenerDatos(String correo){
@@ -73,5 +78,10 @@ public class UsuarioService implements UserDetailsService {
         resultado.setMensaje("El usuario fue creado correctamente");
 
         return resultado;
+    }
+
+
+    public Usuario ObtenerDatosUsuario(Integer idUsuario){
+        return usuarioRepo.findById(idUsuario).orElseThrow();
     }
 }
