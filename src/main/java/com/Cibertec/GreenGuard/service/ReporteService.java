@@ -1,7 +1,6 @@
 package com.Cibertec.GreenGuard.service;
 
 import com.Cibertec.GreenGuard.dto.ReporteFiltroEstadoIncidenteClasificacion;
-import com.Cibertec.GreenGuard.dto.ResultadoResponse;
 import com.Cibertec.GreenGuard.enums.EstadoReporte;
 import com.Cibertec.GreenGuard.model.*;
 import com.Cibertec.GreenGuard.repository.IReporteRepository;
@@ -78,17 +77,9 @@ public class ReporteService {
         return reporRepo.filtrarReportes(estado,incidente,clasificacion);
     }
 
-
-
-
-
-
-
-
-
-
-
-
+    public Reporte obtenerReportePorId(Integer idReporte){
+        return reporRepo.findById(idReporte).orElseThrow();
+    }
 
     //endregion
 

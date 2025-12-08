@@ -3,6 +3,7 @@ package com.Cibertec.GreenGuard.controller;
 import com.Cibertec.GreenGuard.dto.ReporteFiltroEstadoIncidenteClasificacion;
 import com.Cibertec.GreenGuard.model.Reporte;
 import com.Cibertec.GreenGuard.service.ReporteService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,5 +41,14 @@ public class SupervisorController {
         return ResponseEntity.ok(lista);
     }
 
+    @GetMapping("/reporte/{idReporte}")
+    public ResponseEntity<?>reporteDetalle(@PathVariable("idReporte")Integer idReporte){
+        if(idReporte == 0 ){
+            throw new EntityNotFoundException("Ingresar un numero valido");
+        }
 
+        Reporte reporteEncontrado = reporteService.obtenerReportePorId(idReporte);
+
+        return ResponseEntity.ok(reporteEncontrado);
+    }
 }
