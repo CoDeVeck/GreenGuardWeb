@@ -20,6 +20,13 @@ public class UsuarioService implements UserDetailsService {
     @Autowired
     IUsuarioRepository usuarioRepo;
 
+    //region puntos sin cambios
+    private static final int PUNTOS_BAJO = 10;
+    private static final int PUNTOS_MEDIO = 20;
+    private static final int PUNTOS_ALTO = 35;
+    private static final int PUNTOS_MUY_ALTO = 50;
+
+    //endregion
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
@@ -84,4 +91,29 @@ public class UsuarioService implements UserDetailsService {
     public Usuario ObtenerDatosUsuario(Integer idUsuario){
         return usuarioRepo.findById(idUsuario).orElseThrow();
     }
+
+
+
+
+    //Obtener los puntos segun el tipo de incidente del reporte
+
+    public int sumarPutosReporteInicidente(Integer idIncidente) throws IllegalAccessException {
+
+        int totalDePuntosSumar = 0;
+
+        switch (idIncidente){
+            case 1 -> totalDePuntosSumar += PUNTOS_BAJO;
+            case 2 -> totalDePuntosSumar += PUNTOS_MEDIO;
+            case 3 -> totalDePuntosSumar += PUNTOS_ALTO;
+            case 4 -> totalDePuntosSumar += PUNTOS_MUY_ALTO;
+            default -> throw  new IllegalAccessException(
+                    "Tipo de incidente invalido: " + idIncidente);
+        }
+        return totalDePuntosSumar;
+    }
+
+    public Usuario actualizarUsuario(Usuario usuario){
+        return usuarioRepo.save(usuario);
+    }
+
 }
