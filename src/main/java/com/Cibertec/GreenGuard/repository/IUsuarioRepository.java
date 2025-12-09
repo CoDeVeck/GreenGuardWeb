@@ -61,7 +61,12 @@ public interface IUsuarioRepository extends JpaRepository<Usuario, Integer> {
             FROM tb_reporte r  
             INNER JOIN tb_tipo_clasificacion cla ON cla.id_tipo_clasi = r.id_tipo_clasi
             INNER JOIN tb_tipos_incidentes inc ON inc.id_tipo_inci = r.id_tipo_inci
+            WHERE r.id_usu = :idUsuario
+            AND r.id_reporte = :idReporte
             """, nativeQuery = true)
-    List<Object[]>detalleDeReportesCliente();
+    List<Object[]>detalleDeReportesCliente(
+            @Param("idReporte") Integer idReporte,
+            @Param("idUsuario") Integer idUsuario
+    ) ;
 
 }

@@ -1,5 +1,6 @@
 package com.Cibertec.GreenGuard.service;
 
+import com.Cibertec.GreenGuard.dto.DetalleReporteHistorialCliente;
 import com.Cibertec.GreenGuard.dto.ReporteHistorialCliente;
 import com.Cibertec.GreenGuard.dto.response.ResultadoResponse;
 import com.Cibertec.GreenGuard.enums.EstadoReporte;
@@ -13,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -166,6 +168,49 @@ public class UsuarioService implements UserDetailsService {
     }
 
 
+    public List<DetalleReporteHistorialCliente> detalleReporteHistorialClientes(Integer idReporte, Integer idUsuario){
+
+        List<Object[]> resultado = usuarioRepo.detalleDeReportesCliente(idReporte,idUsuario);
+
+        return resultado.stream().map( obj -> {
+            DetalleReporteHistorialCliente dto = new DetalleReporteHistorialCliente();
+
+            dto.setIdReporte((Integer) obj[0]);
+            dto.setNumeroReporte((String) obj[1]);
+            dto.setImagenRepo((String) obj[2]);
+
+            Integer idTipoClasificacion = (Integer) obj[3];
+            dto.setIdTipoClasi(idTipoClasificacion);
+            dto.setIncidente((String) obj[4]);
+
+            Integer puntosObtenidos = switch (idTipoClasificacion){
+                case 1 -> PUNTOS_BAJO;
+                case 2 -> PUNTOS_MEDIO;
+                case 3 -> PUNTOS_ALTO;
+                case 4 -> PUNTOS_MUY_ALTO;
+                default ->  0;
+            };
+
+            dto.setPuntosGanados(puntosObtenidos);
+
+
+            String estadoStr = (String) obj[5];
+
+            dto.setEstado(EstadoReporte.valueOf(estadoStr));
+            dto.setLatitud((BigDecimal) obj[6]);
+            dto.setLongitud((BigDecimal) obj[7]);
+            dto.setDescripcion((String) obj[8]);
+
+            dto.setRepoRegistado(obj[9] != null ?
+                    ((java.sql.Timestamp) obj[9]).toLocalDateTime() : null);
+            dto.setRepoProceso(obj[10] != null ?
+                    ((java.sql.Timestamp) obj[10]).toLocalDateTime() : null);
+            dto.setRepoResuelto(obj[11] != null ?
+                    ((java.sql.Timestamp) obj[11]).toLocalDateTime() : null);
+
+            return dto;
+        }).collect(Collectors.toList());
+    }
 
 
 }
