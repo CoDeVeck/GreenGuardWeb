@@ -123,6 +123,7 @@ public class UsuarioService implements UserDetailsService {
 
     public List<ReporteHistorialCliente> reporteHistorialClientes(String estado){
 
+
         List<Object[]> resultado = usuarioRepo.listaDeReportesDelUsuario(estado);
 
         return resultado.stream().map( obj -> {
@@ -130,7 +131,22 @@ public class UsuarioService implements UserDetailsService {
 
             dto.setIdReporte((Integer) obj[0]);
             dto.setImagenRepo((String) obj[1]);
-            dto.setIdTipoClasi((Integer) obj[2]);
+
+            //Obtenemos el ID de la clasificacion que viene en el native query
+            Integer idTipoClasificacion = (Integer) obj[2];
+            dto.setIdTipoClasi(idTipoClasificacion);
+
+            //Obtenemos los puntos obtenidos segun el tipo de clasificacion que fue para poder enviar
+            //en el JSON
+            Integer puntosObtenidos = switch (idTipoClasificacion){
+                case 1 -> PUNTOS_BAJO;
+                case 2 -> PUNTOS_MEDIO;
+                case 3 -> PUNTOS_ALTO;
+                case 4 -> PUNTOS_MUY_ALTO;
+                default ->  0;
+            };
+
+            dto.setPuntosGanados(puntosObtenidos);
 
             //Convertimos STRING a ENUM
             String estadoStr = (String) obj[3];
