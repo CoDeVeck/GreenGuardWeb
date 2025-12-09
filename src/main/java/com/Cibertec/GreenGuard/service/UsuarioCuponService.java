@@ -28,6 +28,8 @@ public class UsuarioCuponService {
     @Autowired
     UsuarioService usuarioService;
 
+    @Autowired
+    IUsuarioCuponRepository usuarioCuponRepository;
 
     @Transactional
     public ResultadoResponse comprarCupon(Integer idCupon, Integer idUsuario){
@@ -103,6 +105,47 @@ public class UsuarioCuponService {
                c.getCodigoCupon(),
                c.getQrVerificationCode()
        )).toList();
+    }
+
+
+    @Transactional
+    public ResultadoResponse devolverCupon(Integer idCuponUsuario, Integer idUsuario){
+
+        ResultadoResponse resultado = new ResultadoResponse();
+
+        UsuarioCupon cuponDevolver = usuarioCuponRepository.findById(idCuponUsuario)
+                .orElseThrow(() -> new  RuntimeException("Error al encontrar el cupon"));
+
+        if ( cuponDevolver.getEstado().equals(EstadoUsuarioCupon.CA)){
+            resultado.setValor(false);
+            resultado.setMensaje("El cupon fue canjeado y no se puede devolver");
+            return  resultado;
+        };
+
+        if (cuponDevolver.getEstado().equals(EstadoUsuarioCupon.VE)){
+            resultado.setValor(false);
+            resultado.setMensaje("El cupon fue VENCIDO y no se puede devolver");
+            return  resultado;
+        };
+
+        Cupon cupon = cuponDevolver.getCupon();
+
+        Usuario usuario = usuarioService.ObtenerDatosUsuario(idUsuario);
+
+        usuario.setPuntosUsu(usuario.getPuntosUsu() + cupon.getPuntosRequeridos());
+
+        cupon.setStockDisponible(cupon.getStockDisponible() + 1);
+        cupon.setIdCupon(cuponDevolver.getCupon().getIdCupon());
+
+
+        usuCupoRepo.deleteById(idCuponUsuario);
+
+        usuarioService.actualizarUsuario(usuario);
+        cuponRepository.save(cupon);
+
+        resultado.setValor(true);
+        resultado.setMensaje("Cupon devuelto correctamente. Se devolvieron  " + cupon.getPuntosRequeridos() + "puntos.");
+            return resultado;
     }
 
 }

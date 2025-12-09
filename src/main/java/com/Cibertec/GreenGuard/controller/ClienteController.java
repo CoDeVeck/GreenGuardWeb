@@ -49,4 +49,16 @@ public class ClienteController {
         return ResponseEntity.ok(cupones);
     }
 
+    @PostMapping("/misCupones/{idCuponUsuario}/devolver")
+    public ResponseEntity<?>devolverCupones(@PathVariable Integer idCuponUsuario,
+                                            @AuthenticationPrincipal UserDetails userDetails){
+
+        String emailUsuario = userDetails.getUsername();
+        Integer idUsu = usuarioService.obtenerIdPorEmail(emailUsuario);
+
+        ResultadoResponse resultado = usuarioCuponService.devolverCupon(idCuponUsuario, idUsu);
+
+        return ResponseEntity.ok(resultado);
+    }
+
 }
