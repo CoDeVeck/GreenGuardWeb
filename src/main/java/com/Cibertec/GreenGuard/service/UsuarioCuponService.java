@@ -1,5 +1,6 @@
 package com.Cibertec.GreenGuard.service;
 
+import com.Cibertec.GreenGuard.dto.UsuarioCuponDto;
 import com.Cibertec.GreenGuard.dto.response.ResultadoResponse;
 import com.Cibertec.GreenGuard.enums.EstadoUsuarioCupon;
 import com.Cibertec.GreenGuard.model.Cupon;
@@ -7,14 +8,13 @@ import com.Cibertec.GreenGuard.model.Usuario;
 import com.Cibertec.GreenGuard.model.UsuarioCupon;
 import com.Cibertec.GreenGuard.repository.ICuponRepository;
 import com.Cibertec.GreenGuard.repository.IUsuarioCuponRepository;
-import com.Cibertec.GreenGuard.repository.IUsuarioRepository;
 import com.Cibertec.GreenGuard.util.GeneradorUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class UsuarioCuponService {
@@ -28,6 +28,8 @@ public class UsuarioCuponService {
     @Autowired
     UsuarioService usuarioService;
 
+    @Autowired
+    IUsuarioCuponRepository usuarioCuponRepository;
 
     @Transactional
     public ResultadoResponse comprarCupon(Integer idCupon, Integer idUsuario){
@@ -88,6 +90,62 @@ public class UsuarioCuponService {
         resultado.setMensaje("Exito! Adquiriste el cupon: " + cuponComprar.getNombreCupon());
 
         return resultado;
+    }
+
+
+    public List<UsuarioCuponDto> obtenerCuponesUsuario(Integer idUsu){
+       List<UsuarioCupon> listaObtenida = usuCupoRepo.findByUsuarioIdUsu(idUsu);
+
+       return listaObtenida.stream().map( c -> new UsuarioCuponDto(
+               c.getIdUsuarioCupon(),
+               c.getCupon().getNombreCupon(),
+               c.getCupon().getPuntosRequeridos(),
+               c.getFechaCanje(),
+               c.getEstado(),
+               c.getCodigoCupon(),
+               c.getQrVerificationCode()
+       )).toList();
+    }
+
+
+    @Transactional
+    public ResultadoResponse devolverCupon(Integer idCuponUsuario, Integer idUsuario){
+
+        ResultadoResponse resultado = new ResultadoResponse();
+
+        UsuarioCupon cuponDevolver = usuarioCuponRepository.findById(idCuponUsuario)
+                .orElseThrow(() -> new  RuntimeException("Error al encontrar el cupon"));
+
+        if ( cuponDevolver.getEstado().equals(EstadoUsuarioCupon.CA)){
+            resultado.setValor(false);
+            resultado.setMensaje("El cupon fue canjeado y no se puede devolver");
+            return  resultado;
+        };
+
+        if (cuponDevolver.getEstado().equals(EstadoUsuarioCupon.VE)){
+            resultado.setValor(false);
+            resultado.setMensaje("El cupon fue VENCIDO y no se puede devolver");
+            return  resultado;
+        };
+
+        Cupon cupon = cuponDevolver.getCupon();
+
+        Usuario usuario = usuarioService.ObtenerDatosUsuario(idUsuario);
+
+        usuario.setPuntosUsu(usuario.getPuntosUsu() + cupon.getPuntosRequeridos());
+
+        cupon.setStockDisponible(cupon.getStockDisponible() + 1);
+        cupon.setIdCupon(cuponDevolver.getCupon().getIdCupon());
+
+
+        usuCupoRepo.deleteById(idCuponUsuario);
+
+        usuarioService.actualizarUsuario(usuario);
+        cuponRepository.save(cupon);
+
+        resultado.setValor(true);
+        resultado.setMensaje("Cupon devuelto correctamente. Se devolvieron  " + cupon.getPuntosRequeridos() + "puntos.");
+            return resultado;
     }
 
 }
