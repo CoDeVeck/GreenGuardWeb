@@ -12,8 +12,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReporteHistorialCliente {
+
     private Integer idReporte;
     private String imagenRepo;
+    private String incidente;
     private Integer idTipoClasi;
     private Integer puntosGanados;
     private EstadoReporte estado;

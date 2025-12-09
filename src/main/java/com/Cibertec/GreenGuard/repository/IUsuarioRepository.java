@@ -27,6 +27,7 @@ public interface IUsuarioRepository extends JpaRepository<Usuario, Integer> {
             SELECT 
             r.id_reporte,
             r.imagen_repo,
+            inc.desc_tipo_inci,
             cla.id_tipo_clasi,
             r.estado,
             r.repo_registrado,
@@ -34,6 +35,7 @@ public interface IUsuarioRepository extends JpaRepository<Usuario, Integer> {
             r.repo_resuelto
             FROM tb_reporte r
             INNER JOIN tb_tipo_clasificacion cla ON cla.id_tipo_clasi = r.id_tipo_clasi
+            INNER JOIN tb_tipos_incidentes inc ON inc.id_tipo_inci = r.id_tipo_inci
             WHERE (:estado IS NULL OR r.estado = :estado) 
             """, nativeQuery = true)
     List<Object[]> listaDeReportesDelUsuario(

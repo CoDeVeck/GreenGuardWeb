@@ -131,9 +131,10 @@ public class UsuarioService implements UserDetailsService {
 
             dto.setIdReporte((Integer) obj[0]);
             dto.setImagenRepo((String) obj[1]);
+            dto.setIncidente((String) obj[2]);
 
             //Obtenemos el ID de la clasificacion que viene en el native query
-            Integer idTipoClasificacion = (Integer) obj[2];
+            Integer idTipoClasificacion = (Integer) obj[3];
             dto.setIdTipoClasi(idTipoClasificacion);
 
             //Obtenemos los puntos obtenidos segun el tipo de clasificacion que fue para poder enviar
@@ -148,16 +149,17 @@ public class UsuarioService implements UserDetailsService {
 
             dto.setPuntosGanados(puntosObtenidos);
 
+
             //Convertimos STRING a ENUM
-            String estadoStr = (String) obj[3];
+            String estadoStr = (String) obj[4];
             dto.setEstado(EstadoReporte.valueOf(estadoStr));
 
-            dto.setRepoRegistado(obj[4] != null ?
-                    ((java.sql.Timestamp) obj[4]).toLocalDateTime() : null);
-            dto.setRepoProceso(obj[5] != null ?
+            dto.setRepoRegistado(obj[5] != null ?
                     ((java.sql.Timestamp) obj[5]).toLocalDateTime() : null);
-            dto.setRepoResuelto(obj[6] != null ?
+            dto.setRepoProceso(obj[6] != null ?
                     ((java.sql.Timestamp) obj[6]).toLocalDateTime() : null);
+            dto.setRepoResuelto(obj[7] != null ?
+                    ((java.sql.Timestamp) obj[7]).toLocalDateTime() : null);
 
             return dto;
         }).collect(Collectors.toList());
