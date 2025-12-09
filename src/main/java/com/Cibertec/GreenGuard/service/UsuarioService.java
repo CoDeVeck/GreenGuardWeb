@@ -1,6 +1,8 @@
 package com.Cibertec.GreenGuard.service;
 
+import com.Cibertec.GreenGuard.dto.ReporteHistorialCliente;
 import com.Cibertec.GreenGuard.dto.response.ResultadoResponse;
+import com.Cibertec.GreenGuard.enums.EstadoReporte;
 import com.Cibertec.GreenGuard.model.Rol;
 import com.Cibertec.GreenGuard.model.Usuario;
 import com.Cibertec.GreenGuard.repository.IUsuarioRepository;
@@ -12,7 +14,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UsuarioService implements UserDetailsService {
@@ -115,5 +119,33 @@ public class UsuarioService implements UserDetailsService {
     public Usuario actualizarUsuario(Usuario usuario){
         return usuarioRepo.save(usuario);
     }
+
+
+    public List<ReporteHistorialCliente> reporteHistorialClientes(String estado){
+
+        List<Object[]> resultado = usuarioRepo.listaDeReportesDelUsuario(estado);
+
+        return resultado.stream().map( obj -> {
+            ReporteHistorialCliente dto = new ReporteHistorialCliente();
+
+            dto.setIdReporte((Integer) obj[0]);
+            dto.setImagenRepo((String) obj[1]);
+            dto.setIdTipoClasi((Integer) obj[2]);
+
+            //Convertimos STRING a ENUM
+            String estadoStr = (String) obj[3];
+            dto.setEstado(EstadoReporte.valueOf(estadoStr));
+
+            dto.setRepoRegistado(obj[4] != null ?
+                    ((java.sql.Timestamp) obj[4]).toLocalDateTime() : null);
+            dto.setRepoProceso(obj[5] != null ?
+                    ((java.sql.Timestamp) obj[5]).toLocalDateTime() : null);
+            dto.setRepoResuelto(obj[6] != null ?
+                    ((java.sql.Timestamp) obj[6]).toLocalDateTime() : null);
+
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
 
 }

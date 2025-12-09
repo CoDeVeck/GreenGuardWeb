@@ -83,12 +83,14 @@ CREATE TABLE tb_cupon(
     puntos_requeridos INT NOT NULL,
     id_tienda INT REFERENCES tb_tienda(id_tienda),
 	stock_disponible INT,
-	
   	fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	fecha_vencimiento TIMESTAMP NOT NULL,
-	
     activo BOOLEAN DEFAULT TRUE
 );
+
+select * from tb_reporte
+
+
 
 CREATE TABLE tb_usuario_cupon(
     id_usuario_cupon SERIAL PRIMARY KEY,
