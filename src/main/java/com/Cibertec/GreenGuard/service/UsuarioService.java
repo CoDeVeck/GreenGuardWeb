@@ -121,10 +121,10 @@ public class UsuarioService implements UserDetailsService {
     }
 
 
-    public List<ReporteHistorialCliente> reporteHistorialClientes(String estado){
+    public List<ReporteHistorialCliente> reporteHistorialClientes(String estado, Integer idsuario){
 
 
-        List<Object[]> resultado = usuarioRepo.listaDeReportesDelUsuario(estado);
+        List<Object[]> resultado = usuarioRepo.listaDeReportesDelUsuario(estado, idsuario);
 
         return resultado.stream().map( obj -> {
             ReporteHistorialCliente dto = new ReporteHistorialCliente();
@@ -164,6 +164,8 @@ public class UsuarioService implements UserDetailsService {
             return dto;
         }).collect(Collectors.toList());
     }
+
+
 
 
 }

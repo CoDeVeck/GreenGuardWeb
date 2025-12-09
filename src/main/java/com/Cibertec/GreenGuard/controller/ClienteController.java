@@ -86,7 +86,7 @@ public class ClienteController {
         Integer idUsu = usuarioService.obtenerIdPorEmail(emailUsuario);
 
         List<ReporteHistorialCliente> listaReporteCliente =
-                usuarioService.reporteHistorialClientes(estado);
+                usuarioService.reporteHistorialClientes(estado, idUsu);
 
         return ResponseEntity.ok(listaReporteCliente);
     }
