@@ -117,7 +117,7 @@ public class ReporteService {
         Usuario usuarioEncontrado = reportencontrado.getUsuario();
 
         //calculamos los puntos que va a ganar
-        int puntosGanados = usuarioService.sumarPutosReporteInicidente(reportencontrado.getTipoIncidente().getIdTipoInci());
+        int puntosGanados = usuarioService.sumarPutosReporteClasificacion(reportencontrado.getTipoClasificacion().getIdTipoClasi());
 
         //Obtenemos los puntos del usuario en ese momento
         int puntosActuales = usuarioEncontrado.getPuntosUsu();

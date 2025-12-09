@@ -95,19 +95,19 @@ public class UsuarioService implements UserDetailsService {
 
 
 
-    //Obtener los puntos segun el tipo de incidente del reporte
+    //Obtener los puntos segun el tipo de clasificacion del reporte
 
-    public int sumarPutosReporteInicidente(Integer idIncidente) throws IllegalAccessException {
+    public int sumarPutosReporteClasificacion(Integer idClasificacion) throws IllegalAccessException {
 
         int totalDePuntosSumar = 0;
 
-        switch (idIncidente){
+        switch (idClasificacion){
             case 1 -> totalDePuntosSumar += PUNTOS_BAJO;
             case 2 -> totalDePuntosSumar += PUNTOS_MEDIO;
             case 3 -> totalDePuntosSumar += PUNTOS_ALTO;
             case 4 -> totalDePuntosSumar += PUNTOS_MUY_ALTO;
             default -> throw  new IllegalAccessException(
-                    "Tipo de incidente invalido: " + idIncidente);
+                    "Tipo de clasificacion invalido: " + idClasificacion);
         }
         return totalDePuntosSumar;
     }
