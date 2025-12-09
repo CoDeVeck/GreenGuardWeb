@@ -4,7 +4,7 @@ import json
 import tempfile
 import os
 import re
-
+from app.models.few_shot_classifier import HybridClassifier 
 from app.models.yolo_detector import YOLODetector
 from app.models.ollama_classifier import OllamaClassifier
 import traceback
@@ -12,12 +12,13 @@ import traceback
 router = APIRouter()
 
 yolo_detector = YOLODetector()
-ollama_classifier = OllamaClassifier()
+#ollama_classifier = OllamaClassifier()
+classifier = HybridClassifier() 
 
 class ClassificationResponse(BaseModel):
-    idTipoIncidente: int          # ✅ ID para Spring
+    idTipoIncidente: int          #  ID para Spring
     tipoIncidente: str
-    idClasificacion: int          # ✅ ID para Spring
+    idClasificacion: int          # ID para Spring
     clasificacion: str
     nivelRiesgo: str              # Alias de clasificacion
     puntosEstimados: int
@@ -70,6 +71,7 @@ def calcular_puntos(id_clasificacion: int) -> int:
 @router.post("/classify", response_model=ClassificationResponse)
 async def classify_image(file: UploadFile = File(...)):
     """Clasifica una imagen de incidente usando YOLO + Ollama"""
+    
     temp_path = None
     try:
         with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as temp_file:
@@ -80,13 +82,17 @@ async def classify_image(file: UploadFile = File(...)):
         # 1. Detectar objetos con YOLO
         yolo_detections = yolo_detector.detect(temp_path)
         
-        # 2. Clasificar con Ollama
-        ollama_response = ollama_classifier.classify_incident(temp_path, yolo_detections)
-        print("Respuesta completa de Ollama:", ollama_response)
+        # 2. Clasificar con Ollama version ollama
+        #ollama_response = ollama_classifier.classify_incident(temp_path, yolo_detections)
+        #print("Respuesta completa de Ollama:", ollama_response)
         
+        # 2. Clasificación híbrida ✅ CAMBIO AQUÍ
+        result_json = classifier.classify(temp_path, yolo_detections)
+        classification_data = json.loads(result_json)
+
         # 3. Extraer y parsear JSON
-        classification_data = extract_json_from_response(ollama_response)
-        print("JSON extraído:", json.dumps(classification_data, indent=2))
+        #classification_data = extract_json_from_response(ollama_response)
+        #print("JSON extraído:", json.dumps(classification_data, indent=2))
         
         # 4. Calcular puntos según ID de clasificación
         puntos = calcular_puntos(classification_data["id_clasificacion"])

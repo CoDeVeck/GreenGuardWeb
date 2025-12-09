@@ -1,0 +1,49 @@
+========================================
+   GUÍA COMPLETA DE INSTALACIÓN (YOLO,
+     OLLAMA, LLAVA, FASTAPI, TORCH)
+========================================
+
+1) INSTALAR PYTHON 3.11
+-----------------------
+- Descargar Python 3.11 desde la web oficial.
+- Durante la instalación marcar "Add to PATH".
+- Verificar versión:
+
+    python --version
+
+Debe mostrar:
+    Python 3.11.x
+
+NO usar Python 3.12 (causa errores con torch y YOLO).
+
+2) INSTALAR OLLAMA + MODELO LLAVA
+---------------------------------
+- Instalar Ollama desde la página oficial.
+- Abrir CMD (no PowerShell).
+- Descargar el modelo LLAVA:
+    ollama pull llava
+
+- Para ejecutarlo:
+
+    ollama run llava
+
+
+3) INSTALAR DEPENDENCIAS DEL PROYECTO
+-------------------------------------
+En la terminal de VSCode (usando Python 3.11):
+
+    pip install -r requirements.txt
+
+Si ocurre error con torch o torchvision:
+
+    pip uninstall torch torchvision torchaudio -y
+    pip install torch==2.5.1 torchvision==0.20.1
+
+Esta versión funciona correctamente en Python 3.11.
+
+
+4) EJECUTAR EL SERVIDOR FASTAPI (UVICORN)
+-----------------------------------------
+En la terminal de VSCode:
+
+    python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
