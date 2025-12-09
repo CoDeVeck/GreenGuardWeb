@@ -1,5 +1,6 @@
 package com.Cibertec.GreenGuard.service;
 
+import com.Cibertec.GreenGuard.dto.CuponCatalagoDTO;
 import com.Cibertec.GreenGuard.dto.UsuarioCuponDto;
 import com.Cibertec.GreenGuard.dto.response.ResultadoResponse;
 import com.Cibertec.GreenGuard.enums.EstadoUsuarioCupon;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UsuarioCuponService {
@@ -146,6 +148,30 @@ public class UsuarioCuponService {
         resultado.setValor(true);
         resultado.setMensaje("Cupon devuelto correctamente. Se devolvieron  " + cupon.getPuntosRequeridos() + "puntos.");
             return resultado;
+    }
+
+
+
+    public List<CuponCatalagoDTO> catalagoCupones(
+            Boolean activo,
+            String nombre,
+            Integer categoria,
+            Integer puntosMin,
+            Integer puntosMax){
+       
+    	List<Object[]> resultados = usuCupoRepo.listaCatalagoCupon(activo, nombre, categoria, puntosMin, puntosMax);
+    	
+    	return resultados.stream()
+                .map(obj -> new CuponCatalagoDTO(
+                        (Integer) obj[0],
+                        (String) obj[1],
+                        (String) obj[2],
+                        (Integer) obj[3],
+                        (String) obj[4],
+                        ((java.sql.Timestamp) obj[5]).toLocalDateTime(),
+                        (Integer) obj[6]
+                ))
+                .collect(Collectors.toList());
     }
 
 }

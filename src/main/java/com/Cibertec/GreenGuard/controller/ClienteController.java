@@ -1,5 +1,6 @@
 package com.Cibertec.GreenGuard.controller;
 
+import com.Cibertec.GreenGuard.dto.CuponCatalagoDTO;
 import com.Cibertec.GreenGuard.dto.UsuarioCuponDto;
 import com.Cibertec.GreenGuard.dto.response.ResultadoResponse;
 import com.Cibertec.GreenGuard.model.UsuarioCupon;
@@ -60,5 +61,20 @@ public class ClienteController {
 
         return ResponseEntity.ok(resultado);
     }
+
+    @GetMapping("/catalogo")
+    public ResponseEntity<?> catalogoCupnes(
+            @RequestParam(required = false) Boolean activo,
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) Integer categoria,
+            @RequestParam(required = false) Integer puntosMin,
+            @RequestParam(required = false) Integer puntosMax
+    ){
+        List<CuponCatalagoDTO> lista =
+                usuarioCuponService.catalagoCupones(activo, nombre, categoria, puntosMin, puntosMax);
+
+        return ResponseEntity.ok(lista);
+    }
+
 
 }

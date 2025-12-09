@@ -19,7 +19,7 @@ public class Cupon {
     @Column(name="id_cupon")
     private Integer idCupon;
 
-    @Column(name="nombre_cupon")
+    @Column(name="nombre_cupon", length = 50, columnDefinition = "VARCHAR(50)")
     private String nombreCupon;
 
     @Column(name="desc_cupon")
