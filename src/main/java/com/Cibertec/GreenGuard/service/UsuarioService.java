@@ -1,6 +1,8 @@
 package com.Cibertec.GreenGuard.service;
 
+import com.Cibertec.GreenGuard.dto.ReporteHistorialCliente;
 import com.Cibertec.GreenGuard.dto.response.ResultadoResponse;
+import com.Cibertec.GreenGuard.enums.EstadoReporte;
 import com.Cibertec.GreenGuard.model.Rol;
 import com.Cibertec.GreenGuard.model.Usuario;
 import com.Cibertec.GreenGuard.repository.IUsuarioRepository;
@@ -12,7 +14,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UsuarioService implements UserDetailsService {
@@ -95,19 +99,19 @@ public class UsuarioService implements UserDetailsService {
 
 
 
-    //Obtener los puntos segun el tipo de incidente del reporte
+    //Obtener los puntos segun el tipo de clasificacion del reporte
 
-    public int sumarPutosReporteInicidente(Integer idIncidente) throws IllegalAccessException {
+    public int sumarPutosReporteClasificacion(Integer idClasificacion) throws IllegalAccessException {
 
         int totalDePuntosSumar = 0;
 
-        switch (idIncidente){
+        switch (idClasificacion){
             case 1 -> totalDePuntosSumar += PUNTOS_BAJO;
             case 2 -> totalDePuntosSumar += PUNTOS_MEDIO;
             case 3 -> totalDePuntosSumar += PUNTOS_ALTO;
             case 4 -> totalDePuntosSumar += PUNTOS_MUY_ALTO;
             default -> throw  new IllegalAccessException(
-                    "Tipo de incidente invalido: " + idIncidente);
+                    "Tipo de clasificacion invalido: " + idClasificacion);
         }
         return totalDePuntosSumar;
     }
@@ -115,5 +119,51 @@ public class UsuarioService implements UserDetailsService {
     public Usuario actualizarUsuario(Usuario usuario){
         return usuarioRepo.save(usuario);
     }
+
+
+    public List<ReporteHistorialCliente> reporteHistorialClientes(String estado){
+
+
+        List<Object[]> resultado = usuarioRepo.listaDeReportesDelUsuario(estado);
+
+        return resultado.stream().map( obj -> {
+            ReporteHistorialCliente dto = new ReporteHistorialCliente();
+
+            dto.setIdReporte((Integer) obj[0]);
+            dto.setImagenRepo((String) obj[1]);
+            dto.setIncidente((String) obj[2]);
+
+            //Obtenemos el ID de la clasificacion que viene en el native query
+            Integer idTipoClasificacion = (Integer) obj[3];
+            dto.setIdTipoClasi(idTipoClasificacion);
+
+            //Obtenemos los puntos obtenidos segun el tipo de clasificacion que fue para poder enviar
+            //en el JSON
+            Integer puntosObtenidos = switch (idTipoClasificacion){
+                case 1 -> PUNTOS_BAJO;
+                case 2 -> PUNTOS_MEDIO;
+                case 3 -> PUNTOS_ALTO;
+                case 4 -> PUNTOS_MUY_ALTO;
+                default ->  0;
+            };
+
+            dto.setPuntosGanados(puntosObtenidos);
+
+
+            //Convertimos STRING a ENUM
+            String estadoStr = (String) obj[4];
+            dto.setEstado(EstadoReporte.valueOf(estadoStr));
+
+            dto.setRepoRegistado(obj[5] != null ?
+                    ((java.sql.Timestamp) obj[5]).toLocalDateTime() : null);
+            dto.setRepoProceso(obj[6] != null ?
+                    ((java.sql.Timestamp) obj[6]).toLocalDateTime() : null);
+            dto.setRepoResuelto(obj[7] != null ?
+                    ((java.sql.Timestamp) obj[7]).toLocalDateTime() : null);
+
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
 
 }

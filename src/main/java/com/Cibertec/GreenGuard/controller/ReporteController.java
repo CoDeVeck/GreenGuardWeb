@@ -33,16 +33,16 @@ public class ReporteController {
             Integer idUsuario = usuarioService.obtenerIdPorEmail(emailUsuario);
 
             //Obtenemos el tipo de incidente que manda la IA
-            int tipoIncidente = reporte.getTipoIncidente().getIdTipoInci();
+            int tipoClasi = reporte.getTipoClasificacion().getIdTipoClasi();
 
             //Asignamos una carpeta para el tipo de incidente asiganado por la IA
             //(en este caso sera manual pero en la app la ia asigna automaticamente el tipo de incidente)
-            String carpeta = switch (tipoIncidente){
-                case 1 -> "GreenGuard/InciendenteBajo";
-                case 2 -> "GreenGuard/IncidenteMedio";
-                case 3 -> "GreenGuard/IncidenteAlto";
-                case 4 -> "GreenGuard/IncidenteMuyAlto";
-                default -> "GreenGuard/IncidentesGenerales";
+            String carpeta = switch (tipoClasi){
+                case 1 -> "GreenGuard/riesgoBajo";
+                case 2 -> "GreenGuard/riesgoMedio";
+                case 3 -> "GreenGuard/riesgoAlto";
+                case 4 -> "GreenGuard/riesgoMuyAlto";
+                default -> "GreenGuard/riesgosGenerales";
             };
 
             //generamos la URL de la imagen para poder almacenar la referencia en la BD

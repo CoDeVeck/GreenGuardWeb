@@ -1,6 +1,7 @@
 package com.Cibertec.GreenGuard.controller;
 
 import com.Cibertec.GreenGuard.dto.CuponCatalagoDTO;
+import com.Cibertec.GreenGuard.dto.ReporteHistorialCliente;
 import com.Cibertec.GreenGuard.dto.UsuarioCuponDto;
 import com.Cibertec.GreenGuard.dto.response.ResultadoResponse;
 import com.Cibertec.GreenGuard.model.UsuarioCupon;
@@ -76,5 +77,18 @@ public class ClienteController {
         return ResponseEntity.ok(lista);
     }
 
+    @GetMapping("/reporte")
+    public ResponseEntity<?> detalleReporte(
+           @RequestParam(required = false) String estado,
+           @AuthenticationPrincipal UserDetails userDetails
+    ){
+        String emailUsuario = userDetails.getUsername();
+        Integer idUsu = usuarioService.obtenerIdPorEmail(emailUsuario);
+
+        List<ReporteHistorialCliente> listaReporteCliente =
+                usuarioService.reporteHistorialClientes(estado);
+
+        return ResponseEntity.ok(listaReporteCliente);
+    }
 
 }
