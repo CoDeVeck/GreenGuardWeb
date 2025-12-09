@@ -1,4 +1,3 @@
-
 CREATE TABLE tb_rol(
     id_rol SERIAL PRIMARY KEY,
     descripcion VARCHAR(20) NOT NULL
@@ -61,6 +60,7 @@ CREATE TABLE tb_reporte(
     id_tipo_clasi INT,
 	id_distrito INT, 
     repo_registrado TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	repo_proceso TIMESTAMP null,
     repo_resuelto TIMESTAMP NULL,
 	FOREIGN KEY (id_distrito) REFERENCES tb_distrito(id_distrito),
     FOREIGN KEY (id_tipo_inci) REFERENCES tb_tipos_incidentes(id_tipo_inci),
@@ -119,4 +119,3 @@ CREATE TABLE tb_notificacion(
     leida BOOLEAN DEFAULT FALSE,
     descartada BOOLEAN DEFAULT FALSE
 );
-
