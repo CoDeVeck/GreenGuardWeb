@@ -1,10 +1,18 @@
 package com.Cibertec.GreenGuard.dto;
 
 import com.Cibertec.GreenGuard.enums.EstadoReporte;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class DetalleReporteHistorialCliente {
 
     private Integer idReporte;
