@@ -3,7 +3,7 @@ package com.Cibertec.GreenGuard.service;
 import com.Cibertec.GreenGuard.dto.request.ChatGPTRequest;
 import com.Cibertec.GreenGuard.dto.request.PromptRequest;
 import com.Cibertec.GreenGuard.dto.response.ChatGPTResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.Cibertec.GreenGuard.util.ChatbotPrompt;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -27,8 +27,13 @@ public class ChatGPTService {
 
     public String getChatGPTResponse(PromptRequest promptRequest) {
 
-        ChatGPTRequest chatGPTRequest = new ChatGPTRequest(model,
-                List.of(new ChatGPTRequest.Message("user", promptRequest.prompt())));
+        ChatGPTRequest chatGPTRequest = new ChatGPTRequest(
+                model,
+                List.of(
+                        new ChatGPTRequest.Message("system", ChatbotPrompt.BASE_PROMPT),
+                        new ChatGPTRequest.Message("user", promptRequest.prompt())
+                )
+        );
 
         ChatGPTResponse response = restClient.post()
                 .header("Authorization", "Bearer " + apiKey)
@@ -40,3 +45,4 @@ public class ChatGPTService {
         return response.choices().get(0).message().content();
     }
 }
+
