@@ -19,7 +19,7 @@ public class Cupon {
     @Column(name="id_cupon")
     private Integer idCupon;
 
-    @Column(name="nombre_cupon")
+    @Column(name="nombre_cupon", length = 50, columnDefinition = "VARCHAR(50)")
     private String nombreCupon;
 
     @Column(name="desc_cupon")
@@ -29,9 +29,6 @@ public class Cupon {
     @JoinColumn(name = "id_cate")
     private Categoria categoria;
 
-    @Column(name="cod_cupon")
-    private String codCupon;
-
     @Column(name="puntos_requeridos")
     private int puntosRequeridos;
 
@@ -39,8 +36,14 @@ public class Cupon {
     @JoinColumn(name = "id_tienda")
     private Tienda tienda;
 
+    @Column(name="stock_disponible")
+    private int stockDisponible;
+
     @Column(name="fecha_creacion")
     private LocalDateTime fechaCreacion;
+
+    @Column(name="fecha_vencimiento")
+    private LocalDateTime fechaVencimiento;
 
     @Column(name="activo")
     private Boolean activo;

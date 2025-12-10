@@ -61,6 +61,9 @@ public class Reporte {
     @Column(name="repo_registrado")
     private LocalDateTime repoRegistado;
 
+    @Column(name="repo_proceso")
+    private LocalDateTime repoProceso;
+
     @Column(name="repo_resuelto")
     private LocalDateTime repoResuelto;
 

@@ -1,6 +1,6 @@
 package com.Cibertec.GreenGuard.service;
 
-import com.Cibertec.GreenGuard.dto.ClassificationResponseDTO;
+
 import com.Cibertec.GreenGuard.dto.ReporteRequestDTO;
 import com.Cibertec.GreenGuard.dto.ReporteResponseDTO;
 import com.Cibertec.GreenGuard.enums.EstadoReporte;
@@ -21,10 +21,16 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.UUID;
+
 
 import org.springframework.stereotype.Service;
+
+
+import com.Cibertec.GreenGuard.dto.ReporteFiltroEstadoIncidenteClasificacion;
+import com.Cibertec.GreenGuard.dto.response.ResultadoResponse;
+import jakarta.persistence.EntityNotFoundException;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -36,8 +42,8 @@ public class ReporteService {
     private final ITipoIncidenteRepository tipoIncidenteRepository;
     private final ITipoClasificacionRepository tipoClasificacionRepository;
     private final IDistritoRepository distritoRepository;
-
-    
+    private final UsuarioService usuarioService; 
+       
     @Transactional
     public ReporteResponseDTO crearReporteConClasificacion(ReporteRequestDTO request) throws IOException {
         
@@ -119,11 +125,133 @@ public class ReporteService {
                 .build();
     }
     
-    private String generarNumeroReporte() {
-        String timestamp = LocalDateTime.now()
-            .format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        String random = UUID.randomUUID().toString()
-            .substring(0, 6).toUpperCase();
-        return "REP-" + timestamp + "-" + random;
+
+    public Reporte registrarReporte(Reporte reporte, Integer idUsuario){
+
+
+        Usuario usuario = usuarioService.ObtenerDatosUsuario(idUsuario);
+
+        if (usuario == null){
+            throw new EntityNotFoundException("Usuario no encontrado con el ID: "+ idUsuario);
+        }
+
+        Reporte reporteRegistrtado = new Reporte();
+
+        reporteRegistrtado.setUsuario(usuario);
+        reporteRegistrtado.setDetalleRepo(reporte.getDetalleRepo());
+
+
+        reporteRegistrtado.setEstado(EstadoReporte.PE);
+        reporteRegistrtado.setLatitud(reporte.getLatitud());
+        reporteRegistrtado.setLongitud(reporte.getLongitud());
+        reporteRegistrtado.setImagenRepo(reporte.getImagenRepo());
+
+        TipoIncidentes incidenteReporte = new TipoIncidentes();
+        incidenteReporte.setIdTipoInci(reporte.getTipoIncidente().getIdTipoInci());
+
+        TipoClasificacion tipoClasificacion = new TipoClasificacion();
+        tipoClasificacion.setIdTipoClasi(reporte.getTipoClasificacion().getIdTipoClasi());
+
+        Distrito distritoUsuario = new Distrito();
+        distritoUsuario.setIdDistrito(usuario.getDistrito().getIdDistrito());
+
+        reporteRegistrtado.setNumReport(generarNumeroReporte());
+        reporteRegistrtado.setDistrito(distritoUsuario);
+        reporteRegistrtado.setTipoIncidente(incidenteReporte);
+        reporteRegistrtado.setTipoClasificacion(tipoClasificacion);
+        reporteRegistrtado.setRepoRegistado(LocalDateTime.now());
+
+        return reporteRepository.save(reporteRegistrtado);
     }
+
+    private String generarNumeroReporte(){
+        Long count = reporteRepository.count() + 1;
+        return String.format("rep-%d-%d-%05d",LocalDateTime.now().getYear(), LocalDateTime.now().getDayOfMonth(),count);
+    }
+
+
+    //region Listas y Filtros en reportes
+
+    public List<Reporte>listadoGenerallistadoGeneral(){
+        return reporteRepository.findAll();
+    }
+
+
+    //Filtrado triple de reportes
+    public List<ReporteFiltroEstadoIncidenteClasificacion> listadoDeReportesPorFiltro(String estado, Integer incidente, Integer clasificacion){
+        return reporteRepository.filtrarReportes(estado,incidente,clasificacion);
+    }
+
+    public Reporte obtenerReportePorId(Integer idReporte){
+        return reporteRepository.findById(idReporte).orElseThrow();
+    }
+
+    //endregion
+
+    public Reporte cambiarEstadoEnProceso(Integer idReporte){
+        Reporte reportencontrado = obtenerReportePorId(idReporte);
+
+
+       if (reportencontrado == null){
+           throw new RuntimeException("Reporte no encontrado con ID: " + idReporte);
+       }
+
+       reportencontrado.setEstado(EstadoReporte.EP);
+
+       return   reporteRepository.save(reportencontrado);
+    }
+
+    public Reporte cambiarEstadoEnResuelto(Integer idReporte) throws IllegalAccessException {
+        Reporte reportencontrado = obtenerReportePorId(idReporte);
+
+
+        if (reportencontrado == null){
+            throw new RuntimeException("Reporte no encontrado con ID: " + idReporte);
+        }
+
+        if (reportencontrado.getEstado() != EstadoReporte.EP ){
+            throw new RuntimeException("El reporte tiene que estar en estado En Proceso para actualizar");
+        }
+
+        reportencontrado.setEstado(EstadoReporte.RE);
+        reportencontrado.setRepoResuelto(LocalDateTime.now());
+
+        //Obtenemos al usuario con su reporte asignado
+        Usuario usuarioEncontrado = reportencontrado.getUsuario();
+
+        //calculamos los puntos que va a ganar
+        int puntosGanados = usuarioService.sumarPutosReporteClasificacion(reportencontrado.getTipoClasificacion().getIdTipoClasi());
+
+        //Obtenemos los puntos del usuario en ese momento
+        int puntosActuales = usuarioEncontrado.getPuntosUsu();
+        int puntosNuevos = puntosActuales + puntosGanados; //Sumamos los puntos
+
+        //actualizamos los puntos con los que tenia mas el sumado
+        usuarioEncontrado.setPuntosUsu(puntosNuevos);
+
+        //actualizamos al usuario con sus puntos nuevos
+        usuarioService.actualizarUsuario(usuarioEncontrado);
+
+        return reporteRepository.save(reportencontrado);
+    }
+
+    public ResultadoResponse cancelarReporte(Integer idReporte){
+        Reporte reportencontrado = obtenerReportePorId(idReporte);
+        ResultadoResponse resultado = new ResultadoResponse();
+
+
+        if (reportencontrado == null){
+            resultado.setValor(false);
+            resultado.setMensaje("Error al cancelar el reporte");
+            return resultado;
+        }
+
+
+        reportencontrado.setEstado(EstadoReporte.CA);
+        resultado.setValor(true);
+        resultado.setMensaje("Se cancelo exitosamente el reporte con ID: " + idReporte);
+
+        return   resultado;
+    }
+
 }

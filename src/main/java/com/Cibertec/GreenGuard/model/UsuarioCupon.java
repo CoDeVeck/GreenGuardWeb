@@ -44,6 +44,7 @@ public class UsuarioCupon {
     @Column(name="fecha_uso")
     private LocalDateTime fechaUso;
 
+    @Enumerated(EnumType.STRING)
     @Column(name="estado")
     private EstadoUsuarioCupon estado;
 }

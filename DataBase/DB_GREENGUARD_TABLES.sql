@@ -1,4 +1,3 @@
-
 CREATE TABLE tb_rol(
     id_rol SERIAL PRIMARY KEY,
     descripcion VARCHAR(20) NOT NULL
@@ -41,6 +40,7 @@ CREATE TABLE tb_usuario(
     registro_usu DATE DEFAULT CURRENT_DATE,
     puntos_usu INT DEFAULT 0,
     id_rol INT,
+    id_distrito INT REFERENCES tb_distrito(id_distrito),
     activo BOOLEAN DEFAULT TRUE,
 	FCM_TOKEN VARCHAR(500) NULL,
     FCM_TOKEN_FECHA TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -51,7 +51,7 @@ CREATE TABLE tb_reporte(
     id_reporte SERIAL PRIMARY KEY,
     num_report VARCHAR(50) NOT NULL UNIQUE,
     id_usu INT,
-    detalle_repo VARCHAR(150) NOT NULL,
+    detalle_repo VARCHAR(150) NULL,
     imagen_repo VARCHAR(120) NULL,
     estado CHAR(2) CHECK (estado IN ('PE','EP','RE','CA')),    -- pendiente, en proceso, resuelto, cancelado
     latitud NUMERIC(10,6) NOT NULL,
@@ -60,6 +60,7 @@ CREATE TABLE tb_reporte(
     id_tipo_clasi INT,
 	id_distrito INT, 
     repo_registrado TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	repo_proceso TIMESTAMP null,
     repo_resuelto TIMESTAMP NULL,
 	FOREIGN KEY (id_distrito) REFERENCES tb_distrito(id_distrito),
     FOREIGN KEY (id_tipo_inci) REFERENCES tb_tipos_incidentes(id_tipo_inci),
@@ -79,12 +80,17 @@ CREATE TABLE tb_cupon(
     nombre_cupon VARCHAR(50) NOT NULL,
 	desc_cupon VARCHAR(50) NOT NULL,
     id_cate INT REFERENCES tb_categoria(id_cate),
-    cod_cupon VARCHAR(20) NOT NULL,
     puntos_requeridos INT NOT NULL,
     id_tienda INT REFERENCES tb_tienda(id_tienda),
+	stock_disponible INT,
   	fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	fecha_vencimiento TIMESTAMP NOT NULL,
     activo BOOLEAN DEFAULT TRUE
 );
+
+select * from tb_reporte
+
+
 
 CREATE TABLE tb_usuario_cupon(
     id_usuario_cupon SERIAL PRIMARY KEY,
@@ -115,4 +121,3 @@ CREATE TABLE tb_notificacion(
     leida BOOLEAN DEFAULT FALSE,
     descartada BOOLEAN DEFAULT FALSE
 );
-

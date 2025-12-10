@@ -1,6 +1,6 @@
 package com.Cibertec.GreenGuard.controller;
 
-import com.Cibertec.GreenGuard.dto.ResultadoResponse;
+import com.Cibertec.GreenGuard.dto.response.ResultadoResponse;
 import com.Cibertec.GreenGuard.model.Usuario;
 import com.Cibertec.GreenGuard.service.CloudinaryService;
 import com.Cibertec.GreenGuard.service.UsuarioService;
@@ -61,8 +61,8 @@ public class AuthController {
         try {
             String urlImagen = cloudinaryService.uploadImage(
             		/*En este caso la carpeta lo colocando asi poorque
-            		 la carpeta se llama si vas a subirlo en otro cambias
-            		 Users por otra GreenGuard/nombreCarpeta*/
+            		 la carpeta se llama asi, en caso vas a subirlo en
+            		 otro cambias Users por otra GreenGuard/nombreCarpeta*/
                     usuario.getImagenUrl(), "GreenGuard/Users");
            
             usuario.setImagenUsu(urlImagen);
