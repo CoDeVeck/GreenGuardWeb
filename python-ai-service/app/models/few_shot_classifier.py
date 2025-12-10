@@ -359,9 +359,6 @@ RESPONDE SOLO JSON."""
             "razonamiento": "Error en sistema de comparación"
         }
     
-# ═══════════════════════════════════════════════════════════════════
-# INTEGRACIÓN CON TU SISTEMA ACTUAL
-# ═══════════════════════════════════════════════════════════════════
 
 class HybridClassifier:
     """
@@ -400,46 +397,113 @@ class HybridClassifier:
         
         print(f"📊 Few-shot: {result_fewshot['tipo_incidente']} (conf: {conf_fewshot:.2f})")
         
-        # 3. Decisión: ¿Coinciden?
+        # ✅ 3. GENERAR DESCRIPCIÓN REAL DEL INCIDENTE (independiente de la clasificación)
+        descripcion_real = self._generar_descripcion_incidente(image_path, yolo_detections)
+        
+        # 4. Decisión: ¿Coinciden?
         if tipo_standard == tipo_fewshot:
             print("✅ AMBOS CONCUERDAN → Promediando confianza (prioridad few-shot)")
             # Priorizar few-shot: 70% few-shot + 30% estándar
             data_standard["confianza"] = (conf_fewshot * 0.7) + (conf_standard * 0.3)
+            data_standard["descripcion_ia"] = descripcion_real  # ✅ Descripción real
             data_standard["razonamiento"] = (
                 f"Coincidencia → Peso mayor al few-shot ({conf_fewshot:.2f})"
             )
             return json.dumps(data_standard, ensure_ascii=False)
 
-        # 4. No coinciden → PRIORIDAD A FEW-SHOT
+        # 5. No coinciden → PRIORIDAD A FEW-SHOT
         print(f"⚠️ DIFIEREN: Estándar dice {data_standard['tipo_incidente']}, "
-              f"Few-shot dice {result_fewshot['tipo_incidente']}")
+            f"Few-shot dice {result_fewshot['tipo_incidente']}")
 
         # 🔥 Regla principal: Few-shot manda si tiene buena similitud
-        if conf_fewshot >= 0.45:  # puedes ajustar este umbral
+        if conf_fewshot >= 0.45:
             print(f"✅ PRIORIDAD A FEW-SHOT (similaridad suficiente: {conf_fewshot:.2f})")
+            result_fewshot["descripcion_ia"] = descripcion_real  # ✅ Descripción real
             return json.dumps(result_fewshot, ensure_ascii=False)
 
         # Si few-shot es bajo → usa estándar
         print(f"🔹 STANDARD GANA (few-shot bajo: {conf_fewshot:.2f})")
+        data_standard["descripcion_ia"] = descripcion_real  # ✅ Descripción real
         return result_standard
-    
+
+    def _generar_descripcion_incidente(self, image_path: str, yolo_detections: List[Dict]) -> str:
+        """
+        Genera una descripción natural del incidente basada en lo detectado
+        """
+        # Extraer objetos principales detectados
+        objetos_principales = []
+        
+        for det in yolo_detections:
+            clase = det.get('class', '')
+            conf = det.get('confidence', 0)
+            
+            if conf > 0.3:  # Solo objetos con confianza razonable
+                if 'poste' in clase.lower() or 'pole' in clase.lower():
+                    angulo = det.get('angle', 0)
+                    if angulo > 20:
+                        objetos_principales.append(f"poste inclinado ({angulo}°)")
+                    else:
+                        objetos_principales.append("poste")
+                elif 'basura' in clase.lower() or 'trash' in clase.lower():
+                    objetos_principales.append("acumulación de basura")
+                elif 'hueco' in clase.lower() or 'pothole' in clase.lower():
+                    objetos_principales.append("bache en la pista")
+                elif 'traffic' in clase.lower():
+                    objetos_principales.append("semáforo")
+                else:
+                    objetos_principales.append(clase)
+        
+        # Construir descripción natural
+        if not objetos_principales:
+            return "Incidente detectado en la vía pública que requiere atención."
+        
+        if len(objetos_principales) == 1:
+            return f"Se observa {objetos_principales[0]} que requiere atención inmediata."
+        elif len(objetos_principales) == 2:
+            return f"Se detecta {objetos_principales[0]} junto con {objetos_principales[1]}."
+        else:
+            items = ", ".join(objetos_principales[:-1])
+            return f"Se identifican múltiples problemas: {items} y {objetos_principales[-1]}."
+
     def _get_candidate_types(self, yolo_detections: List[Dict], 
                             standard_suggestion: int) -> List[int]:
-        """Determina tipos candidatos para few-shot"""
-        candidates = [standard_suggestion]  # Incluir sugerencia estándar
+        """Determina tipos candidatos para few-shot basándose en detecciones"""
+        candidates = set()
         
-        # Agregar basados en YOLO
-        detected_classes = {d['class'] for d in yolo_detections}
+        # Analizar detecciones YOLO
+        detected_classes = {d['class'].lower() for d in yolo_detections}
         
-        if 'traffic light' in detected_classes:
-            candidates.append(5)  # Semáforo
+        # ✅ Priorizar según lo que REALMENTE detectó
+        for det in yolo_detections:
+            clase = det['class'].lower()
+            conf = det.get('confidence', 0)
+            
+            if conf < 0.3:  # Ignorar detecciones débiles
+                continue
+                
+            # Mapeo más preciso
+            if 'poste' in clase or 'pole' in clase:
+                angulo = det.get('angle', 0)
+                if angulo > 20:
+                    candidates.add(6)  # Postes caídos
+                else:
+                    candidates.add(5)  # Infraestructura dañada
+                    
+            elif 'basura' in clase or 'trash' in clase:
+                candidates.add(7)  # Basura acumulada
+                
+            elif 'hueco' in clase or 'pothole' in clase or 'bache' in clase:
+                candidates.add(1)  # Baches
+                
+            elif 'traffic' in clase or 'semaforo' in clase:
+                candidates.add(5)  # Semáforos
+                
+            elif any(v in clase for v in ['car', 'truck', 'bus', 'vehicle']):
+                candidates.add(4)  # Pistas con huecos
         
-        if any(c in detected_classes for c in ['car', 'truck', 'bus']):
-            candidates.extend([1, 4])  # Baches o pistas
+        # Solo agregar sugerencia estándar si no hay candidatos fuertes
+        if not candidates or len(candidates) < 2:
+            candidates.add(standard_suggestion)
         
-        if any(c in detected_classes for c in ['backpack', 'bottle', 'handbag']):
-            candidates.append(7)  # Basura
-        
-        # Limitar a 5 candidatos únicos
-        return list(set(candidates))[:5]
-
+        # Limitar a 3 candidatos más relevantes
+        return list(candidates)[:3]
