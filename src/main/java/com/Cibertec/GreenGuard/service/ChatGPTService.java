@@ -25,7 +25,7 @@ public class ChatGPTService {
     @Value("${openai.api.model}")
     private String model;
 
-    public String getChatGPTResponse(PromptRequest promptRequest) {
+    public ChatGPTResponse getChatGPTResponse(PromptRequest promptRequest) {
 
         ChatGPTRequest chatGPTRequest = new ChatGPTRequest(
                 model,
@@ -35,14 +35,12 @@ public class ChatGPTService {
                 )
         );
 
-        ChatGPTResponse response = restClient.post()
+        return restClient.post()
                 .header("Authorization", "Bearer " + apiKey)
                 .header("Content-Type", "application/json")
                 .body(chatGPTRequest)
                 .retrieve()
                 .body(ChatGPTResponse.class);
-
-        return response.choices().get(0).message().content();
     }
 }
 
