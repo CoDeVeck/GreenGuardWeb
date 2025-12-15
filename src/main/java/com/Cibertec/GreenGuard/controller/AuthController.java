@@ -57,24 +57,20 @@ public class AuthController {
 
     @PostMapping(value= "/register", consumes = {"multipart/form-data"})
     public ResponseEntity<?> registrarUsuario(@ModelAttribute Usuario usuario){
-
         try {
-            String urlImagen = cloudinaryService.uploadImage(
-            		/*En este caso la carpeta lo colocando asi poorque
-            		 la carpeta se llama asi, en caso vas a subirlo en
-            		 otro cambias Users por otra GreenGuard/nombreCarpeta*/
-                    usuario.getImagenUrl(), "GreenGuard/Users");
-           
-            usuario.setImagenUsu(urlImagen);
+            if (usuario.getImagenUrl() != null && !usuario.getImagenUrl().isEmpty()) {
+                String urlImagen = cloudinaryService.uploadImage(usuario.getImagenUrl(), "GreenGuard/Users");
+                usuario.setImagenUsu(urlImagen);
+            }
 
             ResultadoResponse resultado = usuarioService.createUser(usuario);
-
             return ResponseEntity.ok(resultado);
 
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error registrando usuario: " + e.getMessage());
         }
     }
+
     
     @GetMapping("/me")
     public ResponseEntity<?> getUsuarioInfo(Authentication authentication){
