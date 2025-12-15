@@ -3,6 +3,7 @@ package com.Cibertec.GreenGuard.service;
 
 import com.Cibertec.GreenGuard.dto.ReporteRequestDTO;
 import com.Cibertec.GreenGuard.dto.ReporteResponseDTO;
+import com.Cibertec.GreenGuard.dto.ReporteStatsDTO;
 import com.Cibertec.GreenGuard.enums.EstadoReporte;
 import com.Cibertec.GreenGuard.model.Distrito;
 import com.Cibertec.GreenGuard.model.Reporte;
@@ -20,12 +21,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 
-
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-
+import com.Cibertec.GreenGuard.dto.DashboardUsuarioDTO;
 import com.Cibertec.GreenGuard.dto.ReporteFiltroEstadoIncidenteClasificacion;
 import com.Cibertec.GreenGuard.dto.response.ResultadoResponse;
 import jakarta.persistence.EntityNotFoundException;
@@ -88,7 +92,7 @@ public class ReporteService {
         reporte.setRepoRegistado(LocalDateTime.now());
         reporte.setEstado(EstadoReporte.PE);
         reporte.setUsuario(usuario);
-
+        reporte.setPuntosGanados(puntosNuevos); 
         Distrito distrito = distritoRepository.findById(request.getIdDistrito())
                 .orElseThrow(() -> new RuntimeException("Distrito no encontrado"));
         reporte.setDistrito(distrito);
@@ -121,44 +125,33 @@ public class ReporteService {
                 .repoRegistrado(reporteGuardado.getRepoRegistado())
                 .build();
     }
-    
 
-    public Reporte registrarReporte(Reporte reporte, Integer idUsuario){
-        Usuario usuario = usuarioService.ObtenerDatosUsuario(idUsuario);
+    public DashboardUsuarioDTO obtenerDashboard(Integer idUsuario) {
 
-        if (usuario == null){
-            throw new EntityNotFoundException("Usuario no encontrado con el ID: "+ idUsuario);
-        }
+        Pageable top5 = PageRequest.of(0, 5);
+        LocalDateTime inicioMes = LocalDate.now()
+                .withDayOfMonth(1)
+                .atStartOfDay();
 
-        Reporte reporteRegistrtado = new Reporte();
-
-        reporteRegistrtado.setUsuario(usuario);
-        reporteRegistrtado.setDetalleRepo(reporte.getDetalleRepo());
-
-
-        reporteRegistrtado.setEstado(EstadoReporte.PE);
-        reporteRegistrtado.setLatitud(reporte.getLatitud());
-        reporteRegistrtado.setLongitud(reporte.getLongitud());
-        reporteRegistrtado.setImagenRepo(reporte.getImagenRepo());
-
-        TipoIncidentes incidenteReporte = new TipoIncidentes();
-        incidenteReporte.setIdTipoInci(reporte.getTipoIncidente().getIdTipoInci());
-
-        TipoClasificacion tipoClasificacion = new TipoClasificacion();
-        tipoClasificacion.setIdTipoClasi(reporte.getTipoClasificacion().getIdTipoClasi());
-
-        Distrito distritoUsuario = new Distrito();
-        distritoUsuario.setIdDistrito(usuario.getDistrito().getIdDistrito());
-
-        reporteRegistrtado.setNumReport(generarNumeroReporte());
-        reporteRegistrtado.setDistrito(distritoUsuario);
-        reporteRegistrtado.setTipoIncidente(incidenteReporte);
-        reporteRegistrtado.setTipoClasificacion(tipoClasificacion);
-        reporteRegistrtado.setRepoRegistado(LocalDateTime.now());
-
-        return reporteRepository.save(reporteRegistrtado);
+        LocalDateTime finMes = LocalDate.now()
+                .with(TemporalAdjusters.lastDayOfMonth())
+                .atTime(23, 59, 59);
+        return new DashboardUsuarioDTO(
+            reporteRepository.categoriasMasReportes(top5),
+            reporteRepository.reportesRecientes(idUsuario, top5),
+            usuarioRepository.totalReportes(idUsuario),
+            usuarioRepository.findById(idUsuario)
+                       .orElseThrow()
+                       .getPuntosUsu(),
+           usuarioRepository.puntosMesActual(
+                   idUsuario,
+                   inicioMes,
+                   finMes
+               ),
+           usuarioRepository.totalPersonasBeneficiadas()
+        );
     }
-
+    
     private String generarNumeroReporte(){
         Long count = reporteRepository.count() + 1;
         return String.format("rep-%d-%d-%05d",LocalDateTime.now().getYear(), LocalDateTime.now().getDayOfMonth(),count);

@@ -1,11 +1,14 @@
 package com.Cibertec.GreenGuard.service;
 
 import com.Cibertec.GreenGuard.dto.DetalleReporteHistorialCliente;
+import com.Cibertec.GreenGuard.dto.PerfilUsuarioDTO;
 import com.Cibertec.GreenGuard.dto.ReporteHistorialCliente;
 import com.Cibertec.GreenGuard.dto.response.ResultadoResponse;
 import com.Cibertec.GreenGuard.enums.EstadoReporte;
 import com.Cibertec.GreenGuard.model.Rol;
 import com.Cibertec.GreenGuard.model.Usuario;
+import com.Cibertec.GreenGuard.repository.IReporteRepository;
+import com.Cibertec.GreenGuard.repository.IUsuarioCuponRepository;
 import com.Cibertec.GreenGuard.repository.IUsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,6 +30,12 @@ public class UsuarioService implements UserDetailsService {
     @Autowired
     IUsuarioRepository usuarioRepo;
 
+    @Autowired
+    IReporteRepository reporteRepository;
+    
+    @Autowired
+    IUsuarioCuponRepository usuarioCuponRepository;
+    
     //region puntos sin cambios
     private static final int PUNTOS_BAJO = 10;
     private static final int PUNTOS_MEDIO = 20;
@@ -34,6 +44,57 @@ public class UsuarioService implements UserDetailsService {
 
     //endregion
 
+    public PerfilUsuarioDTO obtenerPerfil(Integer idUsuario) {
+
+        Usuario usuario = usuarioRepo.findById(idUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        PerfilUsuarioDTO dto = new PerfilUsuarioDTO();
+
+        dto.setTotalReportes(
+        		reporteRepository.obtenerReportes(idUsuario)
+        );
+
+        dto.setTotalReportesResueltos(
+        		reporteRepository.obtenerReportesResueltos(idUsuario)
+        );
+
+        dto.setCuponesCanjeado(
+        		usuarioCuponRepository.countCuponesCanjeados(idUsuario)
+        );
+
+        dto.setTotalPuntos(usuario.getPuntosUsu());
+        LocalDateTime registro = usuario.getRegistroUsu();
+        LocalDateTime ahora = LocalDateTime.now();
+        dto.setImagenUrl(usuario.getImagenUsu());
+        Period periodo = Period.between(
+                registro.toLocalDate(),
+                ahora.toLocalDate()
+        );
+
+        int años = periodo.getYears();
+        int meses = periodo.getMonths();
+
+        String tiempoActivo = "";
+
+        if (años > 0) {
+            tiempoActivo += años + (años == 1 ? " año" : " años");
+        }
+
+        if (meses > 0) {
+            if (!tiempoActivo.isEmpty()) tiempoActivo += ", ";
+            tiempoActivo += meses + (meses == 1 ? " mes" : " meses");
+        }
+
+        if (tiempoActivo.isEmpty()) {
+            tiempoActivo = "Menos de un mes";
+        }
+
+        dto.setTiempoActivo(tiempoActivo);
+
+        return dto;
+    }
+    
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
 
@@ -99,7 +160,10 @@ public class UsuarioService implements UserDetailsService {
     }
 
 
-
+    public int obtenerPuntosUsuario(Integer id) {
+    	Usuario user = usuarioRepo.findById(id).orElseThrow();
+    	return user.getPuntosUsu();
+    }
 
     //Obtener los puntos segun el tipo de clasificacion del reporte
 
@@ -183,17 +247,6 @@ public class UsuarioService implements UserDetailsService {
             dto.setIdTipoClasi(idTipoClasificacion);
             dto.setIncidente((String) obj[4]);
 
-            Integer puntosObtenidos = switch (idTipoClasificacion){
-                case 1 -> PUNTOS_BAJO;
-                case 2 -> PUNTOS_MEDIO;
-                case 3 -> PUNTOS_ALTO;
-                case 4 -> PUNTOS_MUY_ALTO;
-                default ->  0;
-            };
-
-            dto.setPuntosGanados(puntosObtenidos);
-
-
             String estadoStr = (String) obj[5];
 
             dto.setEstado(EstadoReporte.valueOf(estadoStr));
@@ -207,6 +260,7 @@ public class UsuarioService implements UserDetailsService {
                     ((java.sql.Timestamp) obj[10]).toLocalDateTime() : null);
             dto.setRepoResuelto(obj[11] != null ?
                     ((java.sql.Timestamp) obj[11]).toLocalDateTime() : null);
+            dto.setPuntosGanados((Integer) obj[12]);
 
             return dto;
         }).collect(Collectors.toList());

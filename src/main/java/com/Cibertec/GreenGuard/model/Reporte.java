@@ -67,6 +67,8 @@ public class Reporte {
     @Column(name="repo_resuelto")
     private LocalDateTime repoResuelto;
 
+    @Column(name="puntos_ganados")
+    private Integer puntosGanados;
     @JsonIgnore
     @Transient
     private MultipartFile imagenUrl; // para la subida de imagens
