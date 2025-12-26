@@ -110,12 +110,14 @@ CREATE TABLE tb_tipo_notificacion(
 CREATE TABLE tb_notificacion(
     id_notificacion SERIAL PRIMARY KEY,
     id_usuario INT NOT NULL REFERENCES tb_usuario(id_usu),
-   	id_tipo_notificacion INT REFERENCES tb_tipo_notificacion,
+    id_tipo_notificacion INT NOT NULL REFERENCES tb_tipo_notificacion(id_tipo_notificacion),
     titulo VARCHAR(100) NOT NULL,
     mensaje VARCHAR(250) NOT NULL,
+
+    -- Referencias opcionales según el tipo
     id_reporte INT NULL REFERENCES tb_reporte(id_reporte),
     id_usuario_cupon INT NULL REFERENCES tb_usuario_cupon(id_usuario_cupon),
-    id_cupon INT NULL 	REFERENCES tb_cupon(id_cupon),
-    leida BOOLEAN DEFAULT FALSE,
-    descartada BOOLEAN DEFAULT FALSE
+
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    leida BOOLEAN DEFAULT FALSE
 );

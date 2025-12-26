@@ -137,38 +137,68 @@ INSERT INTO tb_usuario_cupon (id_cupon, id_usuario, codigo_cupon, qr_verificatio
 -- TB_TIPO_NOTIFICACION
 
 INSERT INTO tb_tipo_notificacion(descripcion) VALUES
+('REPORTE_REGISTRADO'),           -- Cuando se crea el reporte
+('CAMBIO_ESTADO_REPORTE'),        -- Cuando cambia a: en proceso, resuelto, cancelado
+('PUNTOS_GANADOS'),               -- Cuando ganas puntos (incluye bonus)
+('CUPON_CANJEADO'),               -- Cuando canjeas puntos por cupón
+('CUPON_POR_VENCER'),             -- Recordatorio antes de vencer (ej: 3 días antes)
+('CUPON_VENCIDO'),                -- Cuando el cupón ya venció
+('CUPON_USADO');                  -- Cuando usas el cupón en tienda
 
-('REPORTE_PENDIENTE'),
-('REPORTE_EN_PROCESO'),
-('REPORTE_RESUELTO'),
-('REPORTE_CANCELADO'),
-('PUNTOS_GANADOS'),
-('BONUS_MULTIPLO_5'),
-('CUPON_DISPONIBLE'),
-('CUPON_POR_VENCER'),
-('CUPON_VENCIDO'),
-('SISTEMA'),
-('PROMOCIÓN');
+-- ============================================
+-- INSERTS TB_NOTIFICACION
+-- ============================================
 
--- TB_NOTIFICACION
-INSERT INTO tb_notificacion (id_usuario, id_tipo_notificacion, titulo, mensaje, id_reporte, id_usuario_cupon, id_cupon, leida) VALUES
-(2, 1, 'Reporte Registrado', 'Tu reporte ha sido registrado exitosamente', NULL, NULL, NULL, TRUE),
-(3, 3, 'Reporte Resuelto', 'Tu reporte ha sido resuelto. ¡Ganaste 50 puntos!', NULL, NULL, NULL, TRUE),
-(2, 5, 'Cupón Canjeado', 'Has canjeado un cupón de 20% descuento', NULL, 1, 1, FALSE),
-(5, 6, 'Nuevo Cupón Disponible', 'Hay nuevos cupones disponibles en tu zona', NULL, NULL, 3, FALSE),
-(7, 8, 'Puntos Ganados', 'Has ganado 50 puntos por tu reporte', NULL, NULL, NULL, TRUE),
-(9, 7, 'Cupón por Vencer', 'Tu cupón vence en 3 días', NULL, 5, 5, FALSE),
-(3, 2, 'Reporte en Proceso', 'Tu reporte está siendo atendido', NULL, NULL, NULL, TRUE),
-(7, 6, 'Promoción Especial', 'Nuevas promociones disponibles esta semana', NULL, NULL, NULL, FALSE),
-(2, 9, 'Actualización del Sistema', 'Nueva versión disponible con mejoras', NULL, NULL, NULL, TRUE),
-(5, 10, 'Promoción 2x1', 'Doble puntos este fin de semana', NULL, NULL, NULL, FALSE);
+-- TIPO 1: REPORTE_REGISTRADO
+INSERT INTO tb_notificacion (id_usuario, id_tipo_notificacion, titulo, mensaje, id_reporte, id_usuario_cupon, fecha_creacion, leida) VALUES
+(2, 1, '¡Reporte Registrado!', 'Tu reporte rep-2025-7-00002 ha sido registrado exitosamente. Lo revisaremos pronto.', 1, NULL, '2025-12-07 08:30:00', TRUE),
+(2, 1, '¡Reporte Registrado!', 'Tu reporte rep-2025-7-00003 ha sido registrado exitosamente. Lo revisaremos pronto.', 2, NULL, '2025-12-07 09:15:00', TRUE),
+(2, 1, '¡Reporte Registrado!', 'Tu reporte rep-2025-7-00004 ha sido registrado exitosamente. Lo revisaremos pronto.', 3, NULL, '2025-12-07 10:00:00', FALSE);
 
+-- TIPO 2: CAMBIO_ESTADO_REPORTE (En Proceso)
+INSERT INTO tb_notificacion (id_usuario, id_tipo_notificacion, titulo, mensaje, id_reporte, id_usuario_cupon, fecha_creacion, leida) VALUES
+(2, 2, 'Reporte en Proceso', 'Tu reporte rep-2025-7-00005 está siendo atendido por las autoridades.', 4, NULL, '2025-12-06 14:30:00', TRUE),
+(2, 2, 'Reporte en Proceso', 'Tu reporte rep-2025-7-00006 está siendo atendido por las autoridades.', 5, NULL, '2025-12-06 15:50:00', TRUE);
 
+-- TIPO 2: CAMBIO_ESTADO_REPORTE (Resuelto)
+INSERT INTO tb_notificacion (id_usuario, id_tipo_notificacion, titulo, mensaje, id_reporte, id_usuario_cupon, fecha_creacion, leida) VALUES
+(2, 2, '¡Reporte Resuelto!', 'Tu reporte rep-2025-7-00008 ha sido resuelto. ¡Ganaste 10 puntos!', 7, NULL, '2025-12-06 18:00:00', TRUE),
+(2, 2, '¡Reporte Resuelto!', 'Tu reporte rep-2025-7-00009 ha sido resuelto. ¡Ganaste 20 puntos!', 8, NULL, '2025-12-05 12:00:00', TRUE),
+(2, 2, '¡Reporte Resuelto!', 'Tu reporte rep-2025-7-00010 ha sido resuelto. ¡Ganaste 30 puntos!', 9, NULL, '2025-12-04 17:30:00', FALSE);
 
+-- TIPO 3: PUNTOS_GANADOS
+INSERT INTO tb_notificacion (id_usuario, id_tipo_notificacion, titulo, mensaje, id_reporte, id_usuario_cupon, fecha_creacion, leida) VALUES
+(2, 3, '¡Puntos Ganados!', 'Has ganado 10 puntos por reporte resuelto.', 7, NULL, '2025-12-06 18:01:00', TRUE),
+(2, 3, '¡Puntos Ganados!', 'Has ganado 20 puntos por reporte resuelto.', 8, NULL, '2025-12-05 12:01:00', TRUE),
+(3, 3, '¡Puntos Ganados!', 'Has ganado 50 puntos. ¡Sigue reportando!', NULL, NULL, '2025-12-03 10:00:00', FALSE);
 
+-- TIPO 4: CUPON_CANJEADO
+INSERT INTO tb_notificacion (id_usuario, id_tipo_notificacion, titulo, mensaje, id_reporte, id_usuario_cupon, fecha_creacion, leida) VALUES
+(2, 4, '¡Cupón Canjeado!', 'Has canjeado 100 puntos por: Descuento 20% Ropa', NULL, 1, '2025-12-05 14:30:00', TRUE),
+(3, 4, '¡Cupón Canjeado!', 'Has canjeado 150 puntos por: Descuento 50% Comidas', NULL, 2, '2025-12-04 16:45:00', TRUE),
+(5, 4, '¡Cupón Canjeado!', 'Has canjeado 80 puntos por: Descuento 10% Abarrotes', NULL, 3, '2025-12-03 11:20:00', FALSE),
+(7, 4, '¡Cupón Canjeado!', 'Has canjeado 200 puntos por: Descuento 15% Electrodomésticos', NULL, 4, '2025-12-02 09:15:00', TRUE);
 
+-- TIPO 5: CUPON_POR_VENCER
+INSERT INTO tb_notificacion (id_usuario, id_tipo_notificacion, titulo, mensaje, id_reporte, id_usuario_cupon, fecha_creacion, leida) VALUES
+(2, 5, 'Cupón por Vencer', 'Tu cupón Descuento 20% Ropa vence en 3 días. ¡No lo dejes pasar!', NULL, 1, '2025-12-21 08:00:00', FALSE),
+(5, 5, 'Cupón por Vencer', 'Tu cupón Descuento 10% Abarrotes vence en 5 días. ¡No lo dejes pasar!', NULL, 3, '2025-12-19 08:00:00', FALSE),
+(7, 5, 'Cupón por Vencer', 'Tu cupón Descuento 15% Electrodomésticos vence en 2 días. ¡No lo dejes pasar!', NULL, 4, '2025-12-22 08:00:00', TRUE);
 
+-- TIPO 6: CUPON_VENCIDO
+INSERT INTO tb_notificacion (id_usuario, id_tipo_notificacion, titulo, mensaje, id_reporte, id_usuario_cupon, fecha_creacion, leida) VALUES
+(9, 6, 'Cupón Vencido', 'Tu cupón Descuento 25% Belleza ha vencido.', NULL, 5, '2025-12-24 00:01:00', FALSE);
 
+-- TIPO 7: CUPON_USADO
+INSERT INTO tb_notificacion (id_usuario, id_tipo_notificacion, titulo, mensaje, id_reporte, id_usuario_cupon, fecha_creacion, leida) VALUES
+(3, 7, 'Cupón Utilizado', 'Has usado tu cupón Descuento 50% Comidas en Bodega San Miguel. ¡Disfrútalo!', NULL, 2, '2025-12-06 13:30:00', TRUE),
+(7, 7, 'Cupón Utilizado', 'Has usado tu cupón Descuento 40% Comidas en Minimarket El Sol. ¡Disfrútalo!', NULL, 8, '2025-12-05 19:45:00', TRUE);
+
+-- Notificaciones adicionales para otros usuarios
+INSERT INTO tb_notificacion (id_usuario, id_tipo_notificacion, titulo, mensaje, id_reporte, id_usuario_cupon, fecha_creacion, leida) VALUES
+(3, 1, '¡Reporte Registrado!', 'Tu reporte ha sido registrado exitosamente. Lo revisaremos pronto.', NULL, NULL, '2025-12-01 10:30:00', TRUE),
+(5, 3, '¡Puntos Ganados!', 'Has ganado 30 puntos por reporte resuelto.', NULL, NULL, '2025-11-28 15:00:00', TRUE),
+(7, 2, '¡Reporte Resuelto!', 'Tu reporte ha sido resuelto. ¡Ganaste 20 puntos!', NULL, NULL, '2025-11-25 12:00:00', FALSE);
 
 
 -- ============================================
