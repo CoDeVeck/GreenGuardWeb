@@ -62,6 +62,7 @@ CREATE TABLE tb_reporte(
     repo_registrado TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	repo_proceso TIMESTAMP null,
     repo_resuelto TIMESTAMP NULL,
+	puntos_ganados INT,
 	FOREIGN KEY (id_distrito) REFERENCES tb_distrito(id_distrito),
     FOREIGN KEY (id_tipo_inci) REFERENCES tb_tipos_incidentes(id_tipo_inci),
     FOREIGN KEY (id_tipo_clasi) REFERENCES tb_tipo_clasificacion(id_tipo_clasi),
@@ -95,6 +96,7 @@ CREATE TABLE tb_usuario_cupon(
 	codigo_cupon VARCHAR(20) NOT NULL UNIQUE,
 	qr_verification_code VARCHAR(150) NOT NULL UNIQUE,
     fecha_canje TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	qr_image BYTEA NULL,
     canjeado BOOLEAN DEFAULT FALSE,
 	fecha_uso TIMESTAMP NULL,
 	estado char(2) CHECK (estado in('AC','VE','CA')) DEFAULT 'CA' --ACTIVO, VENCIDO, CANJEADO

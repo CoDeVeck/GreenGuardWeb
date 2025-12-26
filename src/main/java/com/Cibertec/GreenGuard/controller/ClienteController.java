@@ -1,14 +1,19 @@
 package com.Cibertec.GreenGuard.controller;
 
 import com.Cibertec.GreenGuard.dto.CuponCatalagoDTO;
+import com.Cibertec.GreenGuard.dto.DashboardUsuarioDTO;
 import com.Cibertec.GreenGuard.dto.DetalleReporteHistorialCliente;
+import com.Cibertec.GreenGuard.dto.PerfilUsuarioDTO;
 import com.Cibertec.GreenGuard.dto.ReporteHistorialCliente;
 import com.Cibertec.GreenGuard.dto.UsuarioCuponDto;
+import com.Cibertec.GreenGuard.dto.response.CanjeCuponResponse;
 import com.Cibertec.GreenGuard.dto.response.ResultadoResponse;
 import com.Cibertec.GreenGuard.model.UsuarioCupon;
+import com.Cibertec.GreenGuard.service.ReporteService;
 import com.Cibertec.GreenGuard.service.UsuarioCuponService;
 import com.Cibertec.GreenGuard.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +30,29 @@ public class ClienteController {
 
     @Autowired
     UsuarioService usuarioService;
+    
+    @Autowired
+    ReporteService reporteService;
+    
+    @GetMapping("/dashboard/{idUsuario}")
+    public DashboardUsuarioDTO dashboard(@PathVariable Integer idUsuario) {
+        return reporteService.obtenerDashboard(idUsuario);
+    }
 
+    @GetMapping("/{idUsuario}/puntos")
+    public ResponseEntity<Integer> obtenerPuntos(@PathVariable Integer idUsuario) {
+        Integer puntos = usuarioService.obtenerPuntosUsuario(idUsuario);
+        return ResponseEntity.ok(puntos);
+    }
+    
+    @GetMapping("/perfil/{idUsuario}")
+    public ResponseEntity<PerfilUsuarioDTO> obtenerPerfil(
+            @PathVariable Integer idUsuario
+    ) {
+        PerfilUsuarioDTO perfil = usuarioService.obtenerPerfil(idUsuario);
+        return ResponseEntity.ok(perfil);
+    }
+    
     @PostMapping("/comprarCupon/{idCupon}")
     public ResponseEntity<?> comprarCupon(@PathVariable("idCupon") Integer idCupon, @AuthenticationPrincipal UserDetails userDetails){
 
@@ -33,7 +60,7 @@ public class ClienteController {
             String emailUsuario = userDetails.getUsername();
             Integer idUsuario = usuarioService.obtenerIdPorEmail(emailUsuario);
 
-            ResultadoResponse resultadoResponse = usuarioCuponService.comprarCupon(idCupon,idUsuario);
+            CanjeCuponResponse resultadoResponse = usuarioCuponService.comprarCupon(idCupon,idUsuario);
 
             return ResponseEntity.ok(resultadoResponse);
 
@@ -42,6 +69,23 @@ public class ClienteController {
         }
     }
 
+    @PutMapping("/canjear/{id}")
+    public ResponseEntity<ResultadoResponse> canjearCupon(@PathVariable Integer id) {
+        
+        ResultadoResponse resultado = usuarioCuponService.canjearCupon(id);
+
+        if (resultado.isValor()) {
+            return ResponseEntity.ok(resultado);
+        } else {
+            
+            if (resultado.getMensaje().contains("no fue encontrado")) {
+                return new ResponseEntity<>(resultado, HttpStatus.NOT_FOUND);
+            } else {
+                return new ResponseEntity<>(resultado, HttpStatus.BAD_REQUEST);
+            }
+        }
+    }
+    
     @GetMapping("/misCupones")
     public ResponseEntity<?> misCupones(@AuthenticationPrincipal UserDetails userDetails){
         String emailUsuario = userDetails.getUsername();
@@ -65,7 +109,7 @@ public class ClienteController {
     }
 
     @GetMapping("/catalogo")
-    public ResponseEntity<?> catalogoCupnes(
+    public ResponseEntity<?> catalogoCupones(
             @RequestParam(required = false) Boolean activo,
             @RequestParam(required = false) String nombre,
             @RequestParam(required = false) Integer categoria,
@@ -77,7 +121,8 @@ public class ClienteController {
 
         return ResponseEntity.ok(lista);
     }
-
+    
+    //reporte
     @GetMapping("/reporte")
     public ResponseEntity<?> historialDeReportes(
            @RequestParam(required = false) String estado,

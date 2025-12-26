@@ -19,7 +19,7 @@ public class CuponCatalagoDTO {
     private String categoria;
     private LocalDateTime fechaVencimiento;
     private Integer stockDisponible;
-
+    private String tienda;
 
 
 }

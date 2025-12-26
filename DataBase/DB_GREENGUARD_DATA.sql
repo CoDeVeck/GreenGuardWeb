@@ -54,7 +54,6 @@ INSERT INTO tb_distrito (desc_distrito) VALUES
 ('Villa El Salvador'),
 ('Villa María del Triunfo');
 
-
 -- TB_TIPOS_INCIDENTES
 INSERT INTO tb_tipos_incidentes (desc_tipo_inci) VALUES
 ('BACHES'),
@@ -172,92 +171,50 @@ INSERT INTO tb_notificacion (id_usuario, id_tipo_notificacion, titulo, mensaje, 
 
 
 
---SOLO SON DATOS DE PRUEBA NO ES NCESARIO EJECUTAR ESTOS INSERTS 
-
 -- ============================================
 -- REPORTES CON ESTADO 'PE' (PENDIENTE)
 -- ============================================
 
--- Reporte PE + Incidente 1 + Clasificación 1 (Riesgo Bajo)
-INSERT INTO tb_reporte (num_report, id_usu, detalle_repo, imagen_repo, estado, latitud, longitud, id_tipo_inci, id_tipo_clasi, id_distrito, repo_registrado, repo_resuelto)
-VALUES ('rep-2025-7-00002', 2, 'Basura acumulada en la esquina', 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteBajo/ejemplo1.jpg', 'PE', -12.046500, -77.042800, 1, 1, 2, '2025-12-07 08:30:00', NULL);
+-- Reporte PE + Incidente 1 + Clasificación 1 (Riesgo Bajo) + Puntos 10
+INSERT INTO tb_reporte (num_report, id_usu, detalle_repo, imagen_repo, estado, latitud, longitud, id_tipo_inci, id_tipo_clasi, id_distrito, repo_registrado, repo_resuelto, puntos_ganados)
+VALUES ('rep-2025-7-00002', 2, 'Basura acumulada en la esquina', 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteBajo/ejemplo1.jpg', 'PE', -12.046500, -77.042800, 1, 1, 2, '2025-12-07 08:30:00', NULL, 10);
 
--- Reporte PE + Incidente 2 + Clasificación 2 (Riesgo Medio)
-INSERT INTO tb_reporte (num_report, id_usu, detalle_repo, imagen_repo, estado, latitud, longitud, id_tipo_inci, id_tipo_clasi, id_distrito, repo_registrado, repo_resuelto)
-VALUES ('rep-2025-7-00003', 2, 'Poste de luz dañado', 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteMedio/ejemplo2.jpg', 'PE', -12.047000, -77.043000, 2, 2, 2, '2025-12-07 09:15:00', NULL);
+-- Reporte PE + Incidente 2 + Clasificación 2 (Riesgo Medio) + Puntos 20
+INSERT INTO tb_reporte (num_report, id_usu, detalle_repo, imagen_repo, estado, latitud, longitud, id_tipo_inci, id_tipo_clasi, id_distrito, repo_registrado, repo_resuelto, puntos_ganados)
+VALUES ('rep-2025-7-00003', 2, 'Poste de luz dañado', 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteMedio/ejemplo2.jpg', 'PE', -12.047000, -77.043000, 2, 2, 2, '2025-12-07 09:15:00', NULL, 20);
 
--- Reporte PE + Incidente 3 + Clasificación 3 (Riesgo Alto)
-INSERT INTO tb_reporte (num_report, id_usu, detalle_repo, imagen_repo, estado, latitud, longitud, id_tipo_inci, id_tipo_clasi, id_distrito, repo_registrado, repo_resuelto)
-VALUES ('rep-2025-7-00004', 2, NULL, 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteAlto/ejemplo3.jpg', 'PE', -12.047500, -77.043500, 3, 3, 2, '2025-12-07 10:00:00', NULL);
+-- Reporte PE + Incidente 3 + Clasificación 3 (Riesgo Alto) + Puntos 30
+INSERT INTO tb_reporte (num_report, id_usu, detalle_repo, imagen_repo, estado, latitud, longitud, id_tipo_inci, id_tipo_clasi, id_distrito, repo_registrado, repo_resuelto, puntos_ganados)
+VALUES ('rep-2025-7-00004', 2, NULL, 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteAlto/ejemplo3.jpg', 'PE', -12.047500, -77.043500, 3, 3, 2, '2025-12-07 10:00:00', NULL, 30);
 
 -- ============================================
 -- REPORTES CON ESTADO 'EP' (EN PROCESO)
 -- ============================================
 
--- Reporte EP + Incidente 1 + Clasificación 2 (Riesgo Medio)
-INSERT INTO tb_reporte (num_report, id_usu, detalle_repo, imagen_repo, estado, latitud, longitud, id_tipo_inci, id_tipo_clasi, id_distrito, repo_registrado, repo_resuelto)
-VALUES ('rep-2025-7-00005', 2, 'Árbol caído bloqueando la vía', 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteMedio/ejemplo4.jpg', 'EP', -12.048000, -77.044000, 1, 2, 2, '2025-12-06 14:20:00', NULL);
+-- Reporte EP + Incidente 1 + Clasificación 2 (Riesgo Medio) + Puntos 20
+INSERT INTO tb_reporte (num_report, id_usu, detalle_repo, imagen_repo, estado, latitud, longitud, id_tipo_inci, id_tipo_clasi, id_distrito, repo_registrado, repo_resuelto, puntos_ganados)
+VALUES ('rep-2025-7-00005', 2, 'Árbol caído bloqueando la vía', 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteMedio/ejemplo4.jpg', 'EP', -12.048000, -77.044000, 1, 2, 2, '2025-12-06 14:20:00', NULL, 20);
 
--- Reporte EP + Incidente 2 + Clasificación 3 (Riesgo Alto)
-INSERT INTO tb_reporte (num_report, id_usu, detalle_repo, imagen_repo, estado, latitud, longitud, id_tipo_inci, id_tipo_clasi, id_distrito, repo_registrado, repo_resuelto)
-VALUES ('rep-2025-7-00006', 2, 'Fuga de agua en tubería principal', 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteAlto/ejemplo5.jpg', 'EP', -12.048500, -77.044500, 2, 3, 2, '2025-12-06 15:45:00', NULL);
+-- Reporte EP + Incidente 2 + Clasificación 3 (Riesgo Alto) + Puntos 30
+INSERT INTO tb_reporte (num_report, id_usu, detalle_repo, imagen_repo, estado, latitud, longitud, id_tipo_inci, id_tipo_clasi, id_distrito, repo_registrado, repo_resuelto, puntos_ganados)
+VALUES ('rep-2025-7-00006', 2, 'Fuga de agua en tubería principal', 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteAlto/ejemplo5.jpg', 'EP', -12.048500, -77.044500, 2, 3, 2, '2025-12-06 15:45:00', NULL, 30);
 
--- Reporte EP + Incidente 3 + Clasificación 1 (Riesgo Bajo)
-INSERT INTO tb_reporte (num_report, id_usu, detalle_repo, imagen_repo, estado, latitud, longitud, id_tipo_inci, id_tipo_clasi, id_distrito, repo_registrado, repo_resuelto)
-VALUES ('rep-2025-7-00007', 2, NULL, 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteBajo/ejemplo6.jpg', 'EP', -12.049000, -77.045000, 3, 1, 2, '2025-12-06 16:30:00', NULL);
+-- Reporte EP + Incidente 3 + Clasificación 1 (Riesgo Bajo) + Puntos 10
+INSERT INTO tb_reporte (num_report, id_usu, detalle_repo, imagen_repo, estado, latitud, longitud, id_tipo_inci, id_tipo_clasi, id_distrito, repo_registrado, repo_resuelto, puntos_ganados)
+VALUES ('rep-2025-7-00007', 2, NULL, 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteBajo/ejemplo6.jpg', 'EP', -12.049000, -77.045000, 3, 1, 2, '2025-12-06 16:30:00', NULL, 10);
 
 -- ============================================
 -- REPORTES CON ESTADO 'RE' (RESUELTO)
 -- ============================================
 
--- Reporte RE + Incidente 1 + Clasificación 1 (Riesgo Bajo)
-INSERT INTO tb_reporte (num_report, id_usu, detalle_repo, imagen_repo, estado, latitud, longitud, id_tipo_inci, id_tipo_clasi, id_distrito, repo_registrado, repo_resuelto)
-VALUES ('rep-2025-7-00008', 2, 'Bache en la pista reparado', 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteBajo/ejemplo7.jpg', 'RE', -12.049500, -77.045500, 1, 1, 2, '2025-12-05 08:00:00', '2025-12-06 18:00:00');
+-- Reporte RE + Incidente 1 + Clasificación 1 (Riesgo Bajo) + Puntos 10
+INSERT INTO tb_reporte (num_report, id_usu, detalle_repo, imagen_repo, estado, latitud, longitud, id_tipo_inci, id_tipo_clasi, id_distrito, repo_registrado, repo_resuelto, puntos_ganados)
+VALUES ('rep-2025-7-00008', 2, 'Bache en la pista reparado', 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteBajo/ejemplo7.jpg', 'RE', -12.049500, -77.045500, 1, 1, 2, '2025-12-05 08:00:00', '2025-12-06 18:00:00', 10);
 
--- Reporte RE + Incidente 2 + Clasificación 2 (Riesgo Medio)
-INSERT INTO tb_reporte (num_report, id_usu, detalle_repo, imagen_repo, estado, latitud, longitud, id_tipo_inci, id_tipo_clasi, id_distrito, repo_registrado, repo_resuelto)
-VALUES ('rep-2025-7-00009', 2, 'Semáforo reparado', 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteMedio/ejemplo8.jpg', 'RE', -12.050000, -77.046000, 2, 2, 2, '2025-12-04 10:30:00', '2025-12-05 12:00:00');
+-- Reporte RE + Incidente 2 + Clasificación 2 (Riesgo Medio) + Puntos 20
+INSERT INTO tb_reporte (num_report, id_usu, detalle_repo, imagen_repo, estado, latitud, longitud, id_tipo_inci, id_tipo_clasi, id_distrito, repo_registrado, repo_resuelto, puntos_ganados)
+VALUES ('rep-2025-7-00009', 2, 'Semáforo reparado', 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteMedio/ejemplo8.jpg', 'RE', -12.050000, -77.046000, 2, 2, 2, '2025-12-04 10:30:00', '2025-12-05 12:00:00', 20);
 
--- Reporte RE + Incidente 3 + Clasificación 3 (Riesgo Alto)
-INSERT INTO tb_reporte (num_report, id_usu, detalle_repo, imagen_repo, estado, latitud, longitud, id_tipo_inci, id_tipo_clasi, id_distrito, repo_registrado, repo_resuelto)
-VALUES ('rep-2025-7-00010', 2, NULL, 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteAlto/ejemplo9.jpg', 'RE', -12.050500, -77.046500, 3, 3, 2, '2025-12-03 09:00:00', '2025-12-04 17:30:00');
-
--- ============================================
--- REPORTES CON ESTADO 'CA' (CANCELADO)
--- ============================================
-
--- Reporte CA + Incidente 1 + Clasificación 3 (Riesgo Alto)
-INSERT INTO tb_reporte (num_report, id_usu, detalle_repo, imagen_repo, estado, latitud, longitud, id_tipo_inci, id_tipo_clasi, id_distrito, repo_registrado, repo_resuelto)
-VALUES ('rep-2025-7-00011', 2, 'Reporte duplicado', 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteAlto/ejemplo10.jpg', 'CA', -12.051000, -77.047000, 1, 3, 2, '2025-12-07 11:00:00', NULL);
-
--- Reporte CA + Incidente 2 + Clasificación 1 (Riesgo Bajo)
-INSERT INTO tb_reporte (num_report, id_usu, detalle_repo, imagen_repo, estado, latitud, longitud, id_tipo_inci, id_tipo_clasi, id_distrito, repo_registrado, repo_resuelto)
-VALUES ('rep-2025-7-00012', 2, 'Información incorrecta', 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteBajo/ejemplo11.jpg', 'CA', -12.051500, -77.047500, 2, 1, 2, '2025-12-07 12:00:00', NULL);
-
--- Reporte CA + Incidente 3 + Clasificación 2 (Riesgo Medio)
-INSERT INTO tb_reporte (num_report, id_usu, detalle_repo, imagen_repo, estado, latitud, longitud, id_tipo_inci, id_tipo_clasi, id_distrito, repo_registrado, repo_resuelto)
-VALUES ('rep-2025-7-00013', 2, NULL, 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteMedio/ejemplo12.jpg', 'CA', -12.052000, -77.048000, 3, 2, 2, '2025-12-07 13:00:00', NULL);
-
--- ============================================
--- REPORTES ADICIONALES PARA COMBINACIONES
--- ============================================
-
--- Más reportes PE para diversidad
-INSERT INTO tb_reporte (num_report, id_usu, detalle_repo, imagen_repo, estado, latitud, longitud, id_tipo_inci, id_tipo_clasi, id_distrito, repo_registrado, repo_resuelto)
-VALUES 
-('rep-2025-7-00014', 2, 'Señalización borrada', 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteBajo/ejemplo13.jpg', 'PE', -12.052500, -77.048500, 1, 3, 2, '2025-12-07 14:00:00', NULL),
-('rep-2025-7-00015', 2, 'Jardín descuidado', 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteMedio/ejemplo14.jpg', 'PE', -12.053000, -77.049000, 2, 1, 2, '2025-12-07 15:00:00', NULL);
-
--- Más reportes EP para diversidad
-INSERT INTO tb_reporte (num_report, id_usu, detalle_repo, imagen_repo, estado, latitud, longitud, id_tipo_inci, id_tipo_clasi, id_distrito, repo_registrado, repo_resuelto)
-VALUES 
-('rep-2025-7-00016', 2, NULL, 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteAlto/ejemplo15.jpg', 'EP', -12.053500, -77.049500, 3, 2, 2, '2025-12-06 17:00:00', NULL),
-('rep-2025-7-00017', 2, 'Alcantarilla obstruida', 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteBajo/ejemplo16.jpg', 'EP', -12.054000, -77.050000, 1, 1, 2, '2025-12-06 18:00:00', NULL);
-
--- Más reportes RE para diversidad
-INSERT INTO tb_reporte (num_report, id_usu, detalle_repo, imagen_repo, estado, latitud, longitud, id_tipo_inci, id_tipo_clasi, id_distrito, repo_registrado, repo_resuelto)
-VALUES 
-('rep-2025-7-00018', 2, 'Luminaria reparada', 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteMedio/ejemplo17.jpg', 'RE', -12.054500, -77.050500, 2, 3, 2, '2025-12-02 08:00:00', '2025-12-03 15:00:00'),
-('rep-2025-7-00019', 2, NULL, 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteAlto/ejemplo18.jpg', 'RE', -12.055000, -77.051000, 3, 1, 2, '2025-12-01 10:00:00', '2025-12-02 14:00:00');
-
-
+-- Reporte RE + Incidente 3 + Clasificación 3 (Riesgo Alto) + Puntos 30
+INSERT INTO tb_reporte (num_report, id_usu, detalle_repo, imagen_repo, estado, latitud, longitud, id_tipo_inci, id_tipo_clasi, id_distrito, repo_registrado, repo_resuelto, puntos_ganados)
+VALUES ('rep-2025-7-00010', 2, NULL, 'https://res.cloudinary.com/dvacublsz/image/upload/v1765164374/GreenGuard/IncidenteAlto/ejemplo9.jpg', 'RE', -12.050500, -77.046500, 3, 3, 2, '2025-12-03 09:00:00', '2025-12-04 17:30:00', 30);

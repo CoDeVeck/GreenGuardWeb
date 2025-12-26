@@ -47,4 +47,6 @@ public class Cupon {
 
     @Column(name="activo")
     private Boolean activo;
+    
+ 
 }

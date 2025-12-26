@@ -7,11 +7,13 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @Entity
 @Table(name = "tb_usuario_cupon")
 public class UsuarioCupon {
@@ -47,4 +49,10 @@ public class UsuarioCupon {
     @Enumerated(EnumType.STRING)
     @Column(name="estado")
     private EstadoUsuarioCupon estado;
+    
+    @JdbcTypeCode(SqlTypes.BINARY)
+    @Column(name = "qr_image")
+    private byte[] qrImage;
+
+
 }
