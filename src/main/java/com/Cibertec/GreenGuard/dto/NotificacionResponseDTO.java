@@ -17,7 +17,6 @@ public class NotificacionResponseDTO {
     private String tipoNotificacion; // Ej: "REPORTE_REGISTRADO"
     private Boolean leida;
     private LocalDateTime fechaCreacion;
-    private LocalDateTime fechaLectura;
 
     // Datos opcionales según el tipo
     private ReporteInfoDTO reporte;

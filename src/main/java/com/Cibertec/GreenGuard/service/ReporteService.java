@@ -203,7 +203,7 @@ public class ReporteService {
                 reportencontrado.getPuntosGanados()
         );
 
-       return   reporteRepository.save(reportencontrado);
+       return  reporteRepository.save(reportencontrado);
     }
 
     public Reporte cambiarEstadoEnResuelto(Integer idReporte) throws IllegalAccessException {
