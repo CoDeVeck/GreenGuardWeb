@@ -1,5 +1,6 @@
 package com.Cibertec.GreenGuard.controller;
 
+import com.Cibertec.GreenGuard.dto.EstadisticasGeneralesDTO;
 import com.Cibertec.GreenGuard.dto.ReporteRequestDTO;
 import com.Cibertec.GreenGuard.dto.ReporteResponseDTO;
 import com.Cibertec.GreenGuard.service.ReporteService;
@@ -19,6 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -62,5 +65,31 @@ public class ReporteController {
 	    ReporteResponseDTO response = reporteService.crearReporteConClasificacion(request);
 	    return ResponseEntity.ok(response);
 	}
+    
+    
+    @GetMapping("/estadisticas-generales")
+    public ResponseEntity<EstadisticasGeneralesDTO> obtenerEstadisticasGenerales() {
+        return ResponseEntity.ok(reporteService.obtenerEstadisticasGenerales());
+    }
+
+    @GetMapping("/por-clasificacion")
+    public ResponseEntity<List<Map<String, Object>>> reportesPorClasificacion() {
+        return ResponseEntity.ok(reporteService.reportesPorClasificacion());
+    }
+
+    @GetMapping("/por-tipo-incidente")
+    public ResponseEntity<List<Map<String, Object>>> reportesPorTipoIncidente() {
+        return ResponseEntity.ok(reporteService.reportesPorTipoIncidente());
+    }
+
+    @GetMapping("/por-distrito")
+    public ResponseEntity<List<Map<String, Object>>> reportesPorDistrito() {
+        return ResponseEntity.ok(reporteService.reportesPorDistrito());
+    }
+
+    @GetMapping("/ultimos")
+    public ResponseEntity<List<Reporte>> obtenerUltimosReportes() {
+        return ResponseEntity.ok(reporteService.obtenerUltimosReportes());
+    }
 
 }

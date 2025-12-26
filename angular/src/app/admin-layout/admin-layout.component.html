@@ -1,0 +1,57 @@
+<div class="container-fluid p-0">
+  <div class="row g-0">
+    <!-- Sidebar -->
+    <nav class="col-md-2 d-none d-md-block bg-dark sidebar text-white">
+      <div class="sidebar-content">
+        <div class="sidebar-header">
+          <h5 class="mb-0">
+            <i class="fa-solid fa-shield-halved me-2"></i>
+            Admin Panel
+          </h5>
+        </div>
+
+        <ul class="nav flex-column sidebar-nav">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/admin/dashboard">
+              <i class="fa-solid fa-chart-line"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+
+        
+
+          <li class="nav-item">
+            <a id="btnReportes" class="nav-link dropdown-toggle" >
+              <i class="fa-solid fa-file-chart-line"></i>
+              <span>Reportes</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="sidebar-footer">
+          <div class="user-info">
+            <i class="fa-solid fa-user-circle me-2"></i>
+            <span>Administrador</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="col-md-10 main-content">
+      <header class="main-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <h2 class="mb-0">Panel de Administración</h2>
+          <button class="btn btn-logout" >
+            <i class="fa-solid fa-right-from-bracket me-2"></i>
+            Cerrar sesión
+          </button>
+        </div>
+      </header>
+
+      <div class="content-wrapper">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+  </div>
+</div>

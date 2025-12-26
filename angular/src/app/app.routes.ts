@@ -3,8 +3,8 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
 
     {
-        path: 'auth',
-        loadChildren: () => import('./auth/auth.module').then((m) => m.AuthModule),
+      path: 'auth',
+      loadChildren: () => import('./auth/auth.module').then((m) => m.AuthModule),
     },
     {
     path: 'cliente',
@@ -26,6 +26,7 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./municipalidad/municipalidad.module').then((m) => m.MunicipalidadModule),
     },
-    { path: '', redirectTo: 'cliente/index', pathMatch: 'full' },
-    { path: '**', redirectTo: 'auth/login' },
+    
+    { path: '', redirectTo: 'admin', pathMatch: 'full' },
+    { path: '**', redirectTo: 'admin' },
 ];

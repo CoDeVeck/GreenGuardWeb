@@ -2,6 +2,7 @@ package com.Cibertec.GreenGuard.repository;
 
 import com.Cibertec.GreenGuard.dto.ReporteFiltroEstadoIncidenteClasificacion;
 import com.Cibertec.GreenGuard.dto.ReporteStatsDTO;
+import com.Cibertec.GreenGuard.enums.EstadoReporte;
 import com.Cibertec.GreenGuard.model.Reporte;
 
 import org.springframework.data.domain.Pageable;
@@ -10,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IReporteRepository extends JpaRepository<Reporte, Integer> {
 	boolean existsByNumReport(String numReport);
@@ -71,4 +73,31 @@ public interface IReporteRepository extends JpaRepository<Reporte, Integer> {
             ORDER BY COUNT(r) DESC
         """)
         List<ReporteStatsDTO> categoriasMasReportes(Pageable pageable);
+        
+        
+       
+     // Contar por estado
+        Long countByEstado(EstadoReporte estado);
+        
+        // Reportes por clasificación
+        @Query("SELECT r.tipoClasificacion.descTipoClasi, COUNT(r) " +
+               "FROM Reporte r GROUP BY r.tipoClasificacion.descTipoClasi")
+        List<Object[]> contarPorClasificacion();
+        
+        // Reportes por tipo de incidente  
+        @Query("SELECT r.tipoIncidente.descTipoInci, COUNT(r) " +
+               "FROM Reporte r GROUP BY r.tipoIncidente.descTipoInci")
+        List<Object[]> contarPorTipoIncidente();
+        
+        // Reportes por distrito (✅ CORREGIDO)
+        @Query("SELECT r.distrito.descDistrito, COUNT(r) " +
+               "FROM Reporte r GROUP BY r.distrito.descDistrito")
+        List<Object[]> contarPorDistrito();
+        
+        // Últimos reportes
+        List<Reporte> findTop10ByOrderByRepoRegistadoDesc();
 }
+
+
+
+
