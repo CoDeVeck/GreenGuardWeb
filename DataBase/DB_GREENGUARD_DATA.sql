@@ -145,31 +145,28 @@ INSERT INTO tb_tipo_notificacion(descripcion) VALUES
 ('CUPON_VENCIDO'),                -- Cuando el cupón ya venció
 ('CUPON_USADO');                  -- Cuando usas el cupón en tienda
 
--- ============================================
--- INSERTS TB_NOTIFICACION
--- ============================================
 
--- TIPO 1: REPORTE_REGISTRADO
+-- TIPO 1: REPORTE_REGISTRADO (SIN id_reporte porque acababan de registrarse)
 INSERT INTO tb_notificacion (id_usuario, id_tipo_notificacion, titulo, mensaje, id_reporte, id_usuario_cupon, fecha_creacion, leida) VALUES
-(2, 1, '¡Reporte Registrado!', 'Tu reporte rep-2025-7-00002 ha sido registrado exitosamente. Lo revisaremos pronto.', 1, NULL, '2025-12-07 08:30:00', TRUE),
-(2, 1, '¡Reporte Registrado!', 'Tu reporte rep-2025-7-00003 ha sido registrado exitosamente. Lo revisaremos pronto.', 2, NULL, '2025-12-07 09:15:00', TRUE),
-(2, 1, '¡Reporte Registrado!', 'Tu reporte rep-2025-7-00004 ha sido registrado exitosamente. Lo revisaremos pronto.', 3, NULL, '2025-12-07 10:00:00', FALSE);
+(2, 1, '¡Reporte Registrado!', 'Tu reporte ha sido registrado exitosamente. Lo revisaremos pronto.', NULL, NULL, '2025-12-07 08:30:00', TRUE),
+(2, 1, '¡Reporte Registrado!', 'Tu reporte ha sido registrado exitosamente. Lo revisaremos pronto.', NULL, NULL, '2025-12-07 09:15:00', TRUE),
+(2, 1, '¡Reporte Registrado!', 'Tu reporte ha sido registrado exitosamente. Lo revisaremos pronto.', NULL, NULL, '2025-12-07 10:00:00', FALSE);
 
--- TIPO 2: CAMBIO_ESTADO_REPORTE (En Proceso)
+-- TIPO 2: CAMBIO_ESTADO_REPORTE (En Proceso - sin id_reporte específico)
 INSERT INTO tb_notificacion (id_usuario, id_tipo_notificacion, titulo, mensaje, id_reporte, id_usuario_cupon, fecha_creacion, leida) VALUES
-(2, 2, 'Reporte en Proceso', 'Tu reporte rep-2025-7-00005 está siendo atendido por las autoridades.', 4, NULL, '2025-12-06 14:30:00', TRUE),
-(2, 2, 'Reporte en Proceso', 'Tu reporte rep-2025-7-00006 está siendo atendido por las autoridades.', 5, NULL, '2025-12-06 15:50:00', TRUE);
+(2, 2, 'Reporte en Proceso', 'Tu reporte está siendo atendido por las autoridades.', NULL, NULL, '2025-12-06 14:30:00', TRUE),
+(2, 2, 'Reporte en Proceso', 'Tu reporte está siendo atendido por las autoridades.', NULL, NULL, '2025-12-06 15:50:00', TRUE);
 
 -- TIPO 2: CAMBIO_ESTADO_REPORTE (Resuelto)
 INSERT INTO tb_notificacion (id_usuario, id_tipo_notificacion, titulo, mensaje, id_reporte, id_usuario_cupon, fecha_creacion, leida) VALUES
-(2, 2, '¡Reporte Resuelto!', 'Tu reporte rep-2025-7-00008 ha sido resuelto. ¡Ganaste 10 puntos!', 7, NULL, '2025-12-06 18:00:00', TRUE),
-(2, 2, '¡Reporte Resuelto!', 'Tu reporte rep-2025-7-00009 ha sido resuelto. ¡Ganaste 20 puntos!', 8, NULL, '2025-12-05 12:00:00', TRUE),
-(2, 2, '¡Reporte Resuelto!', 'Tu reporte rep-2025-7-00010 ha sido resuelto. ¡Ganaste 30 puntos!', 9, NULL, '2025-12-04 17:30:00', FALSE);
+(2, 2, '¡Reporte Resuelto!', 'Tu reporte ha sido resuelto. ¡Ganaste 10 puntos!', NULL, NULL, '2025-12-06 18:00:00', TRUE),
+(2, 2, '¡Reporte Resuelto!', 'Tu reporte ha sido resuelto. ¡Ganaste 20 puntos!', NULL, NULL, '2025-12-05 12:00:00', TRUE),
+(2, 2, '¡Reporte Resuelto!', 'Tu reporte ha sido resuelto. ¡Ganaste 30 puntos!', NULL, NULL, '2025-12-04 17:30:00', FALSE);
 
 -- TIPO 3: PUNTOS_GANADOS
 INSERT INTO tb_notificacion (id_usuario, id_tipo_notificacion, titulo, mensaje, id_reporte, id_usuario_cupon, fecha_creacion, leida) VALUES
-(2, 3, '¡Puntos Ganados!', 'Has ganado 10 puntos por reporte resuelto.', 7, NULL, '2025-12-06 18:01:00', TRUE),
-(2, 3, '¡Puntos Ganados!', 'Has ganado 20 puntos por reporte resuelto.', 8, NULL, '2025-12-05 12:01:00', TRUE),
+(2, 3, '¡Puntos Ganados!', 'Has ganado 10 puntos por reporte resuelto.', NULL, NULL, '2025-12-06 18:01:00', TRUE),
+(2, 3, '¡Puntos Ganados!', 'Has ganado 20 puntos por reporte resuelto.', NULL, NULL, '2025-12-05 12:01:00', TRUE),
 (3, 3, '¡Puntos Ganados!', 'Has ganado 50 puntos. ¡Sigue reportando!', NULL, NULL, '2025-12-03 10:00:00', FALSE);
 
 -- TIPO 4: CUPON_CANJEADO
@@ -199,7 +196,6 @@ INSERT INTO tb_notificacion (id_usuario, id_tipo_notificacion, titulo, mensaje, 
 (3, 1, '¡Reporte Registrado!', 'Tu reporte ha sido registrado exitosamente. Lo revisaremos pronto.', NULL, NULL, '2025-12-01 10:30:00', TRUE),
 (5, 3, '¡Puntos Ganados!', 'Has ganado 30 puntos por reporte resuelto.', NULL, NULL, '2025-11-28 15:00:00', TRUE),
 (7, 2, '¡Reporte Resuelto!', 'Tu reporte ha sido resuelto. ¡Ganaste 20 puntos!', NULL, NULL, '2025-11-25 12:00:00', FALSE);
-
 
 -- ============================================
 -- REPORTES CON ESTADO 'PE' (PENDIENTE)
