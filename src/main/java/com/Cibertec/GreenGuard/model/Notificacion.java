@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -11,7 +14,7 @@ import org.hibernate.annotations.DynamicInsert;
 @Data
 @Entity
 @DynamicInsert
-@Table(name = "tb_tipo_notificacion")
+@Table(name = "tb_notificacion")
 public class Notificacion {
 
     @Id
@@ -41,14 +44,10 @@ public class Notificacion {
     @JoinColumn(name = "id_usuario_cupon")
     private UsuarioCupon usuarioCupon;
 
-    @ManyToOne
-    @JoinColumn(name = "id_cupon")
-    private Cupon cupon;
-
     @Column(name = "leida")
     private Boolean leida;
 
-    @Column(name = "descartada")
-    private Boolean descartada;
+    @Column(name = "fecha_creacion")
+    private LocalDateTime fechaCreacion;
 
 }

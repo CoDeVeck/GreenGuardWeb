@@ -50,7 +50,8 @@ public class ReporteService {
     private final ITipoIncidenteRepository tipoIncidenteRepository;
     private final ITipoClasificacionRepository tipoClasificacionRepository;
     private final IDistritoRepository distritoRepository;
-    private final UsuarioService usuarioService; 
+    private final UsuarioService usuarioService;
+    private final NotificacionService notificacionService;
        
     @Transactional
     public ReporteResponseDTO crearReporteConClasificacion(ReporteRequestDTO request) throws IOException {
@@ -115,6 +116,14 @@ public class ReporteService {
 
         Reporte reporteGuardado = reporteRepository.save(reporte);
         log.info("✅ Reporte creado: {}", reporteGuardado.getNumReport());
+
+
+        //Pa la noti
+        notificacionService.notificarReporteRegistrado(
+                reporte.getUsuario().getIdUsu(),
+                reporte.getIdReporte(),
+                reporte.getNumReport()
+        );
 
         return ReporteResponseDTO.builder()
                 .idReporte(reporteGuardado.getIdReporte())
@@ -195,7 +204,15 @@ public class ReporteService {
 
        reportencontrado.setEstado(EstadoReporte.EP);
 
-       return   reporteRepository.save(reportencontrado);
+        notificacionService.notificarCambioEstadoReporte(
+                reportencontrado.getUsuario().getIdUsu(),
+                reportencontrado.getIdReporte(),
+                reportencontrado.getNumReport(),
+                "EP",
+                reportencontrado.getPuntosGanados()
+        );
+
+       return  reporteRepository.save(reportencontrado);
     }
 
     public Reporte cambiarEstadoEnResuelto(Integer idReporte) throws IllegalAccessException {
@@ -229,6 +246,14 @@ public class ReporteService {
         //actualizamos al usuario con sus puntos nuevos
         usuarioService.actualizarUsuario(usuarioEncontrado);
 
+        notificacionService.notificarCambioEstadoReporte(
+                reportencontrado.getUsuario().getIdUsu(),
+                reportencontrado.getIdReporte(),
+                reportencontrado.getNumReport(),
+                "RE",
+                reportencontrado.getPuntosGanados()
+        );
+
         return reporteRepository.save(reportencontrado);
     }
 
@@ -247,6 +272,14 @@ public class ReporteService {
         reportencontrado.setEstado(EstadoReporte.CA);
         resultado.setValor(true);
         resultado.setMensaje("Se cancelo exitosamente el reporte con ID: " + idReporte);
+
+        notificacionService.notificarCambioEstadoReporte(
+                reportencontrado.getUsuario().getIdUsu(),
+                reportencontrado.getIdReporte(),
+                reportencontrado.getNumReport(),
+                "CA",
+                reportencontrado.getPuntosGanados()
+        );
 
         return   resultado;
     }

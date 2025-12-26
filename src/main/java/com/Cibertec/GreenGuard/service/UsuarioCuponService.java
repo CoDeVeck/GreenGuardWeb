@@ -42,105 +42,116 @@ public class UsuarioCuponService {
 	@Autowired
 	IUsuarioCuponRepository usuarioCuponRepository;
 
+    @Autowired
+    NotificacionService notificacionService;
+
 	@Transactional
 	public CanjeCuponResponse comprarCupon(Integer idCupon, Integer idUsuario) {
 
-		CanjeCuponResponse resultado = new CanjeCuponResponse();
+        CanjeCuponResponse resultado = new CanjeCuponResponse();
 
-		try {
-			Cupon cuponComprar = cuponRepository.findById(idCupon)
-					.orElseThrow(() -> new RuntimeException("Error al encontrar el cupon"));
+        UsuarioCupon cuponAdquirido = null;
+        try {
+            Cupon cuponComprar = cuponRepository.findById(idCupon)
+                    .orElseThrow(() -> new RuntimeException("Error al encontrar el cupon"));
 
-			if (cuponComprar.getFechaVencimiento().isBefore(LocalDateTime.now())) {
-				resultado.setValor(false);
-				resultado.setMensaje("Este cupon ya vencio por lo cual no puede ser adquirido");
-				return resultado;
-			}
+            if (cuponComprar.getFechaVencimiento().isBefore(LocalDateTime.now())) {
+                resultado.setValor(false);
+                resultado.setMensaje("Este cupon ya vencio por lo cual no puede ser adquirido");
+                return resultado;
+            }
 
-			if (cuponComprar.getStockDisponible() <= 0) {
-				resultado.setValor(false);
-				resultado.setMensaje("Cupon agotado");
-				return resultado;
-			}
+            if (cuponComprar.getStockDisponible() <= 0) {
+                resultado.setValor(false);
+                resultado.setMensaje("Cupon agotado");
+                return resultado;
+            }
 
-			Usuario usuario = usuarioService.ObtenerDatosUsuario(idUsuario);
+            Usuario usuario = usuarioService.ObtenerDatosUsuario(idUsuario);
 
-			if (usuario.getPuntosUsu() < cuponComprar.getPuntosRequeridos()) {
-				resultado.setValor(false);
-				resultado.setMensaje("No tienes suficientes puntos");
-				return resultado;
-			}
+            if (usuario.getPuntosUsu() < cuponComprar.getPuntosRequeridos()) {
+                resultado.setValor(false);
+                resultado.setMensaje("No tienes suficientes puntos");
+                return resultado;
+            }
 
-			Optional<UsuarioCupon> ultimoCuponOpt =
-			        usuCupoRepo.findTopByUsuarioAndCuponOrderByFechaCanjeDesc(usuario, cuponComprar);
+            Optional<UsuarioCupon> ultimoCuponOpt =
+                    usuCupoRepo.findTopByUsuarioAndCuponOrderByFechaCanjeDesc(usuario, cuponComprar);
 
-			if (ultimoCuponOpt.isPresent()) {
-			    UsuarioCupon ultimoCupon = ultimoCuponOpt.get();
+            if (ultimoCuponOpt.isPresent()) {
+                UsuarioCupon ultimoCupon = ultimoCuponOpt.get();
 
-			    // ❌ Si el último NO está en CA, no puede volver a adquirir
-			    if (ultimoCupon.getEstado() != EstadoUsuarioCupon.CA) {
-			        resultado.setValor(false);
-			        resultado.setMensaje(
-			            "No puedes adquirir este cupón porque ya tienes uno activo o usado"
-			        );
-			        return resultado;
-			    }
-			}
+                // ❌ Si el último NO está en CA, no puede volver a adquirir
+                if (ultimoCupon.getEstado() != EstadoUsuarioCupon.CA) {
+                    resultado.setValor(false);
+                    resultado.setMensaje(
+                            "No puedes adquirir este cupón porque ya tienes uno activo o usado"
+                    );
+                    return resultado;
+                }
+            }
 
-			// Descontar puntos y stock
-			usuario.setPuntosUsu(usuario.getPuntosUsu() - cuponComprar.getPuntosRequeridos());
-			cuponComprar.setStockDisponible(cuponComprar.getStockDisponible() - 1);
+            // Descontar puntos y stock
+            usuario.setPuntosUsu(usuario.getPuntosUsu() - cuponComprar.getPuntosRequeridos());
+            cuponComprar.setStockDisponible(cuponComprar.getStockDisponible() - 1);
 
-			// Crear cupón adquirido
-			UsuarioCupon cuponAdquirido = new UsuarioCupon();
-			cuponAdquirido.setCupon(cuponComprar);
-			cuponAdquirido.setUsuario(usuario);
-			cuponAdquirido.setCodigoCupon(GeneradorUtil.generarCodigoCupon());
-			cuponAdquirido.setQrVerificationCode(GeneradorUtil.generarCodigoCupon());
-			cuponAdquirido.setFechaCanje(LocalDateTime.now());
-			cuponAdquirido.setCanjeado(false);
-			cuponAdquirido.setEstado(EstadoUsuarioCupon.AC);
+            // Crear cupón adquirido
+            cuponAdquirido = new UsuarioCupon();
+            cuponAdquirido.setCupon(cuponComprar);
+            cuponAdquirido.setUsuario(usuario);
+            cuponAdquirido.setCodigoCupon(GeneradorUtil.generarCodigoCupon());
+            cuponAdquirido.setQrVerificationCode(GeneradorUtil.generarCodigoCupon());
+            cuponAdquirido.setFechaCanje(LocalDateTime.now());
+            cuponAdquirido.setCanjeado(false);
+            cuponAdquirido.setEstado(EstadoUsuarioCupon.AC);
 
-			// GENERAR QR Y GUARDARLO COMO BYTE[]
-			try {
-				String qrContent = String.format("CUPON:%s|CODIGO:%s|USUARIO:%d|FECHA:%s",
-						cuponAdquirido.getCodigoCupon(), cuponAdquirido.getQrVerificationCode(), idUsuario,
-						cuponAdquirido.getFechaCanje());
+            // GENERAR QR Y GUARDARLO COMO BYTE[]
+            try {
+                String qrContent = String.format("CUPON:%s|CODIGO:%s|USUARIO:%d|FECHA:%s",
+                        cuponAdquirido.getCodigoCupon(), cuponAdquirido.getQrVerificationCode(), idUsuario,
+                        cuponAdquirido.getFechaCanje());
 
-				byte[] qrBytes = GeneradorUtil.generateQRCodeBytes(qrContent);
-				cuponAdquirido.setQrImage(qrBytes);
+                byte[] qrBytes = GeneradorUtil.generateQRCodeBytes(qrContent);
+                cuponAdquirido.setQrImage(qrBytes);
 
-				log.info("QR generado exitosamente para cupón {}", cuponAdquirido.getCodigoCupon());
+                log.info("QR generado exitosamente para cupón {}", cuponAdquirido.getCodigoCupon());
 
-			} catch (Exception e) {
-				log.error("Error generando QR para cupón: {}", e.getMessage(), e);
-				// Continúa sin el QR - no es crítico
-			}
+            } catch (Exception e) {
+                log.error("Error generando QR para cupón: {}", e.getMessage(), e);
+                // Continúa sin el QR - no es crítico
+            }
 
-			// Guardar
-			usuarioService.actualizarUsuario(usuario);
-			usuCupoRepo.save(cuponAdquirido);
+            // Guardar
+            usuarioService.actualizarUsuario(usuario);
+            usuCupoRepo.save(cuponAdquirido);
 
-			CanjeCuponResponse response = new CanjeCuponResponse();
+            CanjeCuponResponse response = new CanjeCuponResponse();
 
-			response.setValor(true);
-			response.setMensaje("¡Cupón canjeado con éxito!");
-			response.setCodigoCupon(cuponAdquirido.getCodigoCupon());
-			response.setFechaCanje(cuponAdquirido.getFechaCanje().toString());
+            response.setValor(true);
+            response.setMensaje("¡Cupón canjeado con éxito!");
+            response.setCodigoCupon(cuponAdquirido.getCodigoCupon());
+            response.setFechaCanje(cuponAdquirido.getFechaCanje().toString());
 
-			if (cuponAdquirido.getQrImage() != null) {
-				response.setQrBase64(Base64.getEncoder().encodeToString(cuponAdquirido.getQrImage()));
-			}
+            if (cuponAdquirido.getQrImage() != null) {
+                response.setQrBase64(Base64.getEncoder().encodeToString(cuponAdquirido.getQrImage()));
+            }
 
-			return response;
-		} catch (Exception e) {
-			log.error("Error al comprar cupón: {}", e.getMessage(), e);
-			resultado.setValor(false);
-			resultado.setMensaje("Error al procesar la compra: " + e.getMessage());
-		}
+            notificacionService.notificarCuponCanjeado(
+                    idUsuario,
+                    cuponAdquirido.getUsuario().getIdUsu(),
+                    cuponComprar.getNombreCupon(),
+                    cuponComprar.getPuntosRequeridos()
+            );
 
-		return resultado;
-	}
+            return response;
+        } catch (Exception e) {
+            log.error("Error al comprar cupón: {}", e.getMessage(), e);
+            resultado.setValor(false);
+            resultado.setMensaje("Error al procesar la compra: " + e.getMessage());
+        }
+
+        return resultado;
+    }
 
 	public ResultadoResponse canjearCupon(Integer id) {
 
@@ -167,6 +178,14 @@ public class UsuarioCuponService {
 			usuarioCupon.setCanjeado(true);
 
 			usuCupoRepo.save(usuarioCupon);
+
+
+            notificacionService.notificarCuponUsado(
+                    usuarioCupon.getIdUsuarioCupon(),
+                    usuarioCupon.getIdUsuarioCupon(),
+                    usuarioCupon.getCupon().getNombreCupon(),
+                    usuarioCupon.getCupon().getTienda().getNomTienda()
+            );
 
 			return new ResultadoResponse(true,
 					"Cupón de usuario ID " + id + " canjeado exitosamente. Nuevo estado: CA.");
