@@ -2,6 +2,7 @@ package com.Cibertec.GreenGuard.repository;
 
 import com.Cibertec.GreenGuard.dto.ReporteFiltroEstadoIncidenteClasificacion;
 import com.Cibertec.GreenGuard.dto.ReporteStatsDTO;
+import com.Cibertec.GreenGuard.enums.EstadoReporte;
 import com.Cibertec.GreenGuard.model.Reporte;
 
 import org.springframework.data.domain.Pageable;
@@ -10,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IReporteRepository extends JpaRepository<Reporte, Integer> {
 	boolean existsByNumReport(String numReport);
@@ -30,25 +32,6 @@ public interface IReporteRepository extends JpaRepository<Reporte, Integer> {
 	int obtenerReportes(@Param("idUsuario") Integer idUsuario);
 	
 	
-    //region lista de Reportes personalizados
-    @Query("""
-            SELECT NEW com.Cibertec.GreenGuard.dto.ReporteFiltroEstadoIncidenteClasificacion
-            (   r.idReporte,
-                r.imagenRepo,
-                r.estado,
-                r.tipoIncidente.idTipoInci,
-                r.tipoClasificacion.idTipoClasi,
-                r.detalleRepo,
-                r.repoRegistado) FROM Reporte r
-            WHERE (:estado IS NULL OR CAST(r.estado AS String) = :estado)
-                AND(:incidente IS NULL OR r.tipoIncidente.idTipoInci = :incidente)
-                AND(:clasificacion IS NULL OR r.tipoClasificacion.idTipoClasi = :clasificacion)
-            ORDER BY r.repoRegistado DESC
-            """)
-    List<ReporteFiltroEstadoIncidenteClasificacion> filtrarReportes(@Param("estado")String estado,
-                                                                    @Param("incidente")Integer incidente,
-                                                                    @Param("clasificacion")Integer clasificacion);
-    
     @Query("""
     	    SELECT r
     	    FROM Reporte r
@@ -71,4 +54,42 @@ public interface IReporteRepository extends JpaRepository<Reporte, Integer> {
             ORDER BY COUNT(r) DESC
         """)
         List<ReporteStatsDTO> categoriasMasReportes(Pageable pageable);
+        
+        
+       
+        Long countByEstado(EstadoReporte estado);
+        
+        @Query("SELECT r.tipoClasificacion.descTipoClasi, COUNT(r) " +
+               "FROM Reporte r GROUP BY r.tipoClasificacion.descTipoClasi")
+        List<Object[]> contarPorClasificacion();
+        
+        @Query("SELECT r.tipoIncidente.descTipoInci, COUNT(r) " +
+               "FROM Reporte r GROUP BY r.tipoIncidente.descTipoInci")
+        List<Object[]> contarPorTipoIncidente();
+        
+        @Query("SELECT r.distrito.descDistrito, COUNT(r) " +
+               "FROM Reporte r GROUP BY r.distrito.descDistrito")
+        List<Object[]> contarPorDistrito();
+        
+        List<Reporte> findTop10ByOrderByRepoRegistadoDesc();
+        
+        
+        @Query("SELECT new com.Cibertec.GreenGuard.dto.ReporteFiltroEstadoIncidenteClasificacion(" +
+        	       "r.idReporte, r.imagenRepo, r.estado, " +
+        	       "r.tipoIncidente.idTipoInci, r.tipoClasificacion.idTipoClasi, " +
+        	       "r.detalleRepo, r.repoRegistado, " +
+        	       "r.tipoIncidente.descTipoInci, r.tipoClasificacion.descTipoClasi) " +  // ← AGREGAR ESTOS 2
+        	       "FROM Reporte r " +
+        	       "WHERE (:estado IS NULL OR CAST(r.estado AS string) = :estado) " +
+        	       "AND (:incidente IS NULL OR r.tipoIncidente.idTipoInci = :incidente) " +
+        	       "AND (:clasificacion IS NULL OR r.tipoClasificacion.idTipoClasi = :clasificacion) " +
+        	       "ORDER BY r.repoRegistado DESC")
+        	List<ReporteFiltroEstadoIncidenteClasificacion> filtrarReportes(
+        	        @Param("estado") String estado,
+        	        @Param("incidente") Integer incidente,
+        	        @Param("clasificacion") Integer clasificacion);
 }
+
+
+
+

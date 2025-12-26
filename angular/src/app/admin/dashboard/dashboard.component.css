@@ -1,0 +1,46 @@
+/* Transiciones suaves */
+.card {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Progress bars animadas */
+.progress-bar {
+  transition: width 0.6s ease;
+}
+
+/* Tabla responsive */
+.table-responsive {
+  border-radius: 0 0 0.375rem 0.375rem;
+}
+
+/* Iconos de Bootstrap Icons */
+.bi {
+  vertical-align: middle;
+}
+
+/* Badges personalizados */
+.badge {
+  font-weight: 600;
+  padding: 0.35em 0.65em;
+}
+
+/* Loading spinner */
+.spinner-border {
+  border-width: 0.3em;
+}
+
+/* Cards de KPIs */
+.card-body h2 {
+  font-size: 2rem;
+}
+
+@media (max-width: 768px) {
+  .card-body h2 {
+    font-size: 1.5rem;
+  }
+}

@@ -30,11 +30,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.Cibertec.GreenGuard.dto.DashboardUsuarioDTO;
+import com.Cibertec.GreenGuard.dto.EstadisticasGeneralesDTO;
 import com.Cibertec.GreenGuard.dto.ReporteFiltroEstadoIncidenteClasificacion;
 import com.Cibertec.GreenGuard.dto.response.ResultadoResponse;
 import jakarta.persistence.EntityNotFoundException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -166,8 +170,13 @@ public class ReporteService {
 
 
     //Filtrado triple de reportes
-    public List<ReporteFiltroEstadoIncidenteClasificacion> listadoDeReportesPorFiltro(String estado, Integer incidente, Integer clasificacion){
-        return reporteRepository.filtrarReportes(estado,incidente,clasificacion);
+    public List<ReporteFiltroEstadoIncidenteClasificacion> listadoDeReportesPorFiltro(
+            String estado, Integer incidente, Integer clasificacion) {
+        
+        // Convertir String a EstadoReporte si no es null
+        String estadoParam = (estado != null && !estado.isEmpty()) ? estado : null;
+        
+        return reporteRepository.filtrarReportes(estadoParam, incidente, clasificacion);
     }
 
     public Reporte obtenerReportePorId(Integer idReporte){
@@ -251,5 +260,56 @@ public class ReporteService {
             case 4 -> "GreenGuard/riesgoMuyAlto";
             default -> "GreenGuard/riesgosGenerales";
         };
+    }
+    
+    
+    public EstadisticasGeneralesDTO obtenerEstadisticasGenerales() {
+        return EstadisticasGeneralesDTO.builder()
+            .totalReportes(reporteRepository.count())
+            .reportesPendientes(reporteRepository.countByEstado(EstadoReporte.PE))
+            .reportesEnProceso(reporteRepository.countByEstado(EstadoReporte.EP))
+            .reportesResueltos(reporteRepository.countByEstado(EstadoReporte.RE))
+            .reportesCancelados(reporteRepository.countByEstado(EstadoReporte.CA))
+            .build();
+    }
+
+    public List<Map<String, Object>> reportesPorClasificacion() {
+        List<Object[]> resultados = reporteRepository.contarPorClasificacion();
+        return resultados.stream()
+            .map(r -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put("clasificacion", r[0].toString());
+                map.put("cantidad", ((Number) r[1]).longValue());
+                return map;
+            })
+            .collect(Collectors.toList());
+    }
+
+    public List<Map<String, Object>> reportesPorTipoIncidente() {
+        List<Object[]> resultados = reporteRepository.contarPorTipoIncidente();
+        return resultados.stream()
+            .map(r -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put("tipoIncidente", r[0].toString());
+                map.put("cantidad", ((Number) r[1]).longValue());
+                return map;
+            })
+            .collect(Collectors.toList());
+    }
+
+    public List<Map<String, Object>> reportesPorDistrito() {
+        List<Object[]> resultados = reporteRepository.contarPorDistrito();
+        return resultados.stream()
+            .map(r -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put("distrito", r[0].toString());
+                map.put("cantidad", ((Number) r[1]).longValue());
+                return map;
+            })
+            .collect(Collectors.toList());
+    }
+
+    public List<Reporte> obtenerUltimosReportes() {
+        return reporteRepository.findTop10ByOrderByRepoRegistadoDesc();
     }
 }
