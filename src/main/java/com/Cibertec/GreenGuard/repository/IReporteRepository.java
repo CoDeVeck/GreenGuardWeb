@@ -32,25 +32,6 @@ public interface IReporteRepository extends JpaRepository<Reporte, Integer> {
 	int obtenerReportes(@Param("idUsuario") Integer idUsuario);
 	
 	
-    //region lista de Reportes personalizados
-    @Query("""
-            SELECT NEW com.Cibertec.GreenGuard.dto.ReporteFiltroEstadoIncidenteClasificacion
-            (   r.idReporte,
-                r.imagenRepo,
-                r.estado,
-                r.tipoIncidente.idTipoInci,
-                r.tipoClasificacion.idTipoClasi,
-                r.detalleRepo,
-                r.repoRegistado) FROM Reporte r
-            WHERE (:estado IS NULL OR CAST(r.estado AS String) = :estado)
-                AND(:incidente IS NULL OR r.tipoIncidente.idTipoInci = :incidente)
-                AND(:clasificacion IS NULL OR r.tipoClasificacion.idTipoClasi = :clasificacion)
-            ORDER BY r.repoRegistado DESC
-            """)
-    List<ReporteFiltroEstadoIncidenteClasificacion> filtrarReportes(@Param("estado")String estado,
-                                                                    @Param("incidente")Integer incidente,
-                                                                    @Param("clasificacion")Integer clasificacion);
-    
     @Query("""
     	    SELECT r
     	    FROM Reporte r
@@ -76,26 +57,37 @@ public interface IReporteRepository extends JpaRepository<Reporte, Integer> {
         
         
        
-     // Contar por estado
         Long countByEstado(EstadoReporte estado);
         
-        // Reportes por clasificación
         @Query("SELECT r.tipoClasificacion.descTipoClasi, COUNT(r) " +
                "FROM Reporte r GROUP BY r.tipoClasificacion.descTipoClasi")
         List<Object[]> contarPorClasificacion();
         
-        // Reportes por tipo de incidente  
         @Query("SELECT r.tipoIncidente.descTipoInci, COUNT(r) " +
                "FROM Reporte r GROUP BY r.tipoIncidente.descTipoInci")
         List<Object[]> contarPorTipoIncidente();
         
-        // Reportes por distrito (✅ CORREGIDO)
         @Query("SELECT r.distrito.descDistrito, COUNT(r) " +
                "FROM Reporte r GROUP BY r.distrito.descDistrito")
         List<Object[]> contarPorDistrito();
         
-        // Últimos reportes
         List<Reporte> findTop10ByOrderByRepoRegistadoDesc();
+        
+        
+        @Query("SELECT new com.Cibertec.GreenGuard.dto.ReporteFiltroEstadoIncidenteClasificacion(" +
+        	       "r.idReporte, r.imagenRepo, r.estado, " +
+        	       "r.tipoIncidente.idTipoInci, r.tipoClasificacion.idTipoClasi, " +
+        	       "r.detalleRepo, r.repoRegistado, " +
+        	       "r.tipoIncidente.descTipoInci, r.tipoClasificacion.descTipoClasi) " +  // ← AGREGAR ESTOS 2
+        	       "FROM Reporte r " +
+        	       "WHERE (:estado IS NULL OR CAST(r.estado AS string) = :estado) " +
+        	       "AND (:incidente IS NULL OR r.tipoIncidente.idTipoInci = :incidente) " +
+        	       "AND (:clasificacion IS NULL OR r.tipoClasificacion.idTipoClasi = :clasificacion) " +
+        	       "ORDER BY r.repoRegistado DESC")
+        	List<ReporteFiltroEstadoIncidenteClasificacion> filtrarReportes(
+        	        @Param("estado") String estado,
+        	        @Param("incidente") Integer incidente,
+        	        @Param("clasificacion") Integer clasificacion);
 }
 
 

@@ -170,8 +170,13 @@ public class ReporteService {
 
 
     //Filtrado triple de reportes
-    public List<ReporteFiltroEstadoIncidenteClasificacion> listadoDeReportesPorFiltro(String estado, Integer incidente, Integer clasificacion){
-        return reporteRepository.filtrarReportes(estado,incidente,clasificacion);
+    public List<ReporteFiltroEstadoIncidenteClasificacion> listadoDeReportesPorFiltro(
+            String estado, Integer incidente, Integer clasificacion) {
+        
+        // Convertir String a EstadoReporte si no es null
+        String estadoParam = (estado != null && !estado.isEmpty()) ? estado : null;
+        
+        return reporteRepository.filtrarReportes(estadoParam, incidente, clasificacion);
     }
 
     public Reporte obtenerReportePorId(Integer idReporte){

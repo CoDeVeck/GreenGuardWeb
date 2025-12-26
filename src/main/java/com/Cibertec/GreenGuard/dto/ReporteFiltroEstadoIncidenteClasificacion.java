@@ -5,8 +5,9 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Setter @Getter
-@AllArgsConstructor
+
+@Getter
+@Setter
 @NoArgsConstructor
 public class ReporteFiltroEstadoIncidenteClasificacion {
 
@@ -19,5 +20,29 @@ public class ReporteFiltroEstadoIncidenteClasificacion {
     private LocalDateTime repoRegistado;
 
 
+    private String descTipoInci;
+    private String descTipoClasi;
 
+    
+    
+    public ReporteFiltroEstadoIncidenteClasificacion(
+            Integer idReporte,
+            String imagenRepo,
+            EstadoReporte estado,
+            Integer idTipoInci,
+            Integer idTipoClasi,
+            String detalleRepo,
+            LocalDateTime repoRegistado,
+            String descTipoInci,
+            String descTipoClasi) {
+        this.idReporte = idReporte;
+        this.imagenRepo = imagenRepo;
+        this.estado = estado;
+        this.idTipoInci = idTipoInci;
+        this.idTipoClasi = idTipoClasi;
+        this.detalleRepo = detalleRepo;
+        this.repoRegistado = repoRegistado;
+        this.descTipoInci = descTipoInci;
+        this.descTipoClasi = descTipoClasi;
+    }
 }
